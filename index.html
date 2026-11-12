@@ -1,0 +1,2492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ಆವಿಯಾಗುವಿಕೆ ಮತ್ತು ಮೇಲ್ಮೈ ವಿಸ್ತೀರ್ಣ - Evaporation & Surface Area 3D Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --glass-bg: rgba(15, 23, 42, 0.88);
+      --glass-border: rgba(255, 255, 255, 0.16);
+      --glass-highlight: rgba(255, 255, 255, 0.08);
+      --accent-cyan: #38bdf8;
+      --accent-amber: #fbbf24;
+      --accent-emerald: #34d399;
+      --accent-rose: #fb7185;
+      --text-primary: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --top-h: 68px;
+      --side-w: 324px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Plus Jakarta Sans', 'Noto Sans Kannada', system-ui, sans-serif;
+      background: #0f172a;
+      color: var(--text-primary);
+    }
+
+    /* Dedicated Unobstructed 3D Activity Area */
+    #stage-area {
+      position: fixed;
+      top: var(--top-h);
+      left: 0;
+      right: var(--side-w);
+      bottom: 0;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    #stage-area canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Top Dock Bar (Completely outside 3D activity area) */
+    #top-dock {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--top-h);
+      z-index: 10;
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.88));
+      border-bottom: 1px solid var(--glass-border);
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    #title-card {
+      min-width: 245px;
+      max-width: 310px;
+    }
+
+    #title-card h1 {
+      font-size: 0.92rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      background: linear-gradient(135deg, #7dd3fc, #fde68a);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.25;
+    }
+
+    #title-card p {
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    /* Instruction & Feedback Strip inside Top Dock */
+    #step-banner {
+      flex: 1;
+      background: rgba(30, 41, 59, 0.78);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 12px;
+      padding: 7px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .step-badge {
+      background: linear-gradient(135deg, #0284c7, #38bdf8);
+      color: #fff;
+      font-weight: 800;
+      font-size: 0.72rem;
+      padding: 5px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .step-copy {
+      min-width: 0;
+      flex: 1;
+    }
+
+    #step-text-kn {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #fde68a;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #step-text-en {
+      font-size: 0.72rem;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #action-buttons {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .btn-glass {
+      padding: 6px 11px;
+      border-radius: 10px;
+      border: 1px solid var(--glass-border);
+      background: rgba(30, 41, 59, 0.75);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 1.2;
+    }
+
+    .btn-glass:hover {
+      background: rgba(51, 65, 85, 0.92);
+      border-color: var(--accent-cyan);
+    }
+
+    .btn-glass span.kn {
+      font-size: 0.66rem;
+      color: #bae6fd;
+    }
+
+    /* Right Docked HUD Dashboard (Outside 3D Activity Area) */
+    #hud-dashboard {
+      position: fixed;
+      top: var(--top-h);
+      right: 0;
+      bottom: 0;
+      width: var(--side-w);
+      z-index: 10;
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-left: 1px solid var(--glass-border);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      overflow-y: auto;
+    }
+
+    .hud-section-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #93c5fd;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 4px;
+    }
+
+    /* Progress Pills inside Right Dock */
+    .status-pill-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 5px;
+    }
+
+    .status-pill {
+      font-size: 0.64rem;
+      padding: 5px 4px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-secondary);
+      font-weight: 600;
+      text-align: center;
+      line-height: 1.25;
+    }
+
+    .status-pill.done {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: rgba(52, 211, 153, 0.6);
+      color: #a7f3d0;
+    }
+
+    .status-pill.active {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: rgba(56, 189, 248, 0.65);
+      color: #e0f2fe;
+    }
+
+    /* Clock & Sun Display */
+    .time-box {
+      background: rgba(2, 6, 23, 0.5);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 10px;
+      padding: 8px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .time-label {
+      font-size: 0.69rem;
+      color: var(--text-secondary);
+      line-height: 1.3;
+    }
+
+    #sim-time-display {
+      font-size: 0.96rem;
+      font-weight: 800;
+      color: var(--accent-amber);
+      text-align: right;
+      line-height: 1.2;
+    }
+
+    #sim-time-kn {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #fde68a;
+      text-align: right;
+    }
+
+    /* Sun Intensity Slider */
+    .sun-control {
+      background: rgba(2, 6, 23, 0.45);
+      border: 1px solid rgba(251, 191, 36, 0.25);
+      border-radius: 10px;
+      padding: 8px 10px;
+    }
+
+    .sun-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      font-size: 0.74rem;
+      font-weight: 600;
+    }
+
+    #sun-value-badge {
+      background: rgba(251, 191, 36, 0.2);
+      color: #fde047;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 0.74rem;
+    }
+
+    input[type="range"]#sun-slider {
+      width: 100%;
+      appearance: none;
+      height: 6px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #334155 0%, #f59e0b 50%, #fef08a 100%);
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]#sun-slider::-webkit-slider-thumb {
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #fff;
+      border: 3px solid #f59e0b;
+      box-shadow: 0 0 10px rgba(251, 191, 36, 0.85);
+      cursor: pointer;
+    }
+
+    /* Water Level Rows */
+    .water-metrics {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 9px;
+      border-radius: 9px;
+      background: rgba(255, 255, 255, 0.05);
+      border-left: 4px solid var(--accent-cyan);
+      font-size: 0.74rem;
+    }
+
+    .metric-row.bottle { border-left-color: #38bdf8; }
+    .metric-row.cup { border-left-color: #a78bfa; }
+    .metric-row.plate { border-left-color: #fb7185; }
+
+    .metric-name {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.25;
+    }
+
+    .metric-name strong { font-size: 0.75rem; }
+    .metric-name span { font-size: 0.65rem; color: var(--text-secondary); }
+
+    .metric-val {
+      text-align: right;
+      font-weight: 800;
+      font-size: 0.84rem;
+      color: #e0f2fe;
+    }
+
+    .metric-evap {
+      font-size: 0.64rem;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+
+    /* Live Canvas Bar Graph */
+    .chart-wrapper {
+      background: rgba(2, 6, 23, 0.58);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 8px;
+    }
+
+    #evap-chart {
+      width: 100%;
+      height: 148px;
+      display: block;
+    }
+
+    /* Compact Controls Guide inside Right Dock */
+    #controls-hint {
+      font-size: 0.67rem;
+      color: #cbd5e1;
+      line-height: 1.4;
+      background: rgba(2, 6, 23, 0.42);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 9px;
+      padding: 7px 9px;
+    }
+
+    /* Confetti Canvas & Result Pop-Up Modal */
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      pointer-events: none;
+    }
+
+    #result-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      background: rgba(2, 6, 23, 0.65);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    #result-overlay.open {
+      display: flex;
+      animation: fadeIn 0.35s ease;
+    }
+
+    #result-modal {
+      max-width: 560px;
+      width: 100%;
+      padding: 28px;
+      border-radius: 22px;
+      background: linear-gradient(155deg, rgba(15, 23, 42, 0.94), rgba(30, 41, 59, 0.92));
+      border: 2px solid rgba(56, 189, 248, 0.65);
+      box-shadow: 0 0 55px rgba(56, 189, 248, 0.4), 0 20px 60px rgba(0, 0, 0, 0.6);
+      text-align: center;
+      animation: popUp 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    #result-modal h2 {
+      font-size: 1.42rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #fde047, #38bdf8, #34d399);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    .result-summary-text {
+      font-size: 0.92rem;
+      line-height: 1.6;
+      color: #f1f5f9;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin: 14px 0;
+    }
+
+    .result-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 14px 0 18px;
+    }
+
+    .res-card {
+      background: rgba(2, 6, 23, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 10px 8px;
+    }
+
+    .res-card .label { font-size: 0.72rem; color: #94a3b8; }
+    .res-card .val { font-size: 1.15rem; font-weight: 800; margin-top: 4px; color: #38bdf8; }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(37, 99, 235, 0.45);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(56, 189, 248, 0.55);
+    }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes popUp {
+      from { opacity: 0; transform: scale(0.88) translateY(16px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    @media (max-width: 980px) {
+      :root { --side-w: 270px; }
+      #title-card { display: none; }
+    }
+  </style>
+
+  <!-- Three.js & OrbitControls via CDN Import Map -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <!-- Dedicated Unobstructed 3D Canvas Stage -->
+  <div id="stage-area"></div>
+
+  <!-- Top Docked Header & Instruction Strip (Zero overlap with 3D table) -->
+  <header id="top-dock">
+    <div id="title-card">
+      <h1>ಆವಿಯಾಗುವಿಕೆ ಮತ್ತು ಮೇಲ್ಮೈ ವಿಸ್ತೀರ್ಣ • Evaporation Lab</h1>
+      <p>3D ಭೌತಶಾಸ್ತ್ರ ಪ್ರಯೋಗಾಲಯ • Interactive Outdoor 3D Lab</p>
+    </div>
+
+    <div id="step-banner">
+      <div class="step-badge" id="step-badge">ಹಂತ 1 / Step 1</div>
+      <div class="step-copy">
+        <div id="step-text-kn">ಟೂಲ್‌ಬಾಕ್ಸ್‌ನಿಂದ ಬಾಟಲಿ, ಲೋಟ ಮತ್ತು ತಟ್ಟೆಯನ್ನು ಮೇಜಿನ ಮೇಲೆ ಎಳೆದು ಇರಿಸಿ.</div>
+        <div id="step-text-en">Drag Bottle, Cup, and Plate from the Toolbox onto the 3 pads on the table.</div>
+      </div>
+    </div>
+
+    <div id="action-buttons">
+      <button class="btn-glass" id="btn-reset-cam" title="Reset Camera">
+        <span>🎥 ಕ್ಯಾಮೆರಾ</span>
+        <span class="kn">Reset View</span>
+      </button>
+      <button class="btn-glass" id="btn-reset-sim" title="Reset Experiment">
+        <span>🔄 ಮರುಪ್ರಾರಂಭಿಸಿ</span>
+        <span class="kn">Reset Lab</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Right Docked HUD Dashboard (Zero overlap with 3D table) -->
+  <aside id="hud-dashboard">
+    <div class="hud-section-title">
+      <span>ಪ್ರಗತಿ • Experiment Steps</span>
+      <span id="sim-status-tag" style="color:#fbbf24;">ಸಿದ್ಧತೆ • Setup</span>
+    </div>
+
+    <div class="status-pill-row">
+      <div class="status-pill active" id="pill-place">1. ಪಾತ್ರೆ<br/>Place (0/3)</div>
+      <div class="status-pill" id="pill-fill">2. 20ml ನೀರು<br/>Fill (0/3)</div>
+      <div class="status-pill" id="pill-watch">3. ಸ್ಟಾಪ್‌ವಾಚ್<br/>Start</div>
+    </div>
+
+    <!-- Simulated Time -->
+    <div class="time-box">
+      <div class="time-label">
+        <div><strong>ಸಮಯ (Time-Lapse)</strong></div>
+        <div>Simulated Clock (Max 3 Hrs)</div>
+      </div>
+      <div>
+        <div id="sim-time-display">0 Hours 0 Mins</div>
+        <div id="sim-time-kn">0 ಗಂಟೆ 0 ನಿಮಿಷ</div>
+      </div>
+    </div>
+
+    <!-- Sun Intensity Slider -->
+    <div class="sun-control">
+      <div class="sun-header">
+        <span>☀️ ಸೂರ್ಯನ ತೀವ್ರತೆ - Sun Intensity</span>
+        <span id="sun-value-badge">75%</span>
+      </div>
+      <input type="range" id="sun-slider" min="0" max="100" value="75" />
+      <div style="display:flex; justify-content:space-between; font-size:0.65rem; color:#94a3b8; margin-top:4px;">
+        <span>ಮೋಡ • 0 (Cool)</span>
+        <span>ತೀವ್ರ ಬಿಸಿಲು • 100 (Blazing)</span>
+      </div>
+    </div>
+
+    <!-- Water Levels in ml -->
+    <div class="hud-section-title">
+      <span>ನೀರಿನ ಮಟ್ಟ • Water Level (ml)</span>
+      <span>ಗುರಿ: 20 ml</span>
+    </div>
+
+    <div class="water-metrics">
+      <div class="metric-row bottle">
+        <div class="metric-name">
+          <strong>A. ಸಣ್ಣ ಬಾಟಲಿ • Narrow Bottle</strong>
+          <span>ಕಡಿಮೆ ವಿಸ್ತೀರ್ಣ (Low Surface Area)</span>
+        </div>
+        <div>
+          <div class="metric-val" id="val-bottle">0.0 ml</div>
+          <div class="metric-evap" id="evap-bottle">ಆವಿಯಾದದ್ದು: 0.0 ml</div>
+        </div>
+      </div>
+
+      <div class="metric-row cup">
+        <div class="metric-name">
+          <strong>B. ಪ್ಲಾಸ್ಟಿಕ್ ಲೋಟ • Plastic Cup</strong>
+          <span>ಮಧ್ಯಮ ವಿಸ್ತೀರ್ಣ (Medium Surface Area)</span>
+        </div>
+        <div>
+          <div class="metric-val" id="val-cup">0.0 ml</div>
+          <div class="metric-evap" id="evap-cup">ಆವಿಯಾದದ್ದು: 0.0 ml</div>
+        </div>
+      </div>
+
+      <div class="metric-row plate">
+        <div class="metric-name">
+          <strong>C. ಅಗಲವಾದ ತಟ್ಟೆ • Wide Plate</strong>
+          <span>ಹೆಚ್ಚು ವಿಸ್ತೀರ್ಣ (High Surface Area)</span>
+        </div>
+        <div>
+          <div class="metric-val" id="val-plate">0.0 ml</div>
+          <div class="metric-evap" id="evap-plate">ಆವಿಯಾದದ್ದು: 0.0 ml</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Canvas Bar Graph -->
+    <div class="hud-section-title">
+      <span>ಆವಿಯಾಗುವಿಕೆ ಗ್ರಾಫ್ • Live Bar Graph</span>
+      <span>0 - 20 ml</span>
+    </div>
+    <div class="chart-wrapper">
+      <canvas id="evap-chart"></canvas>
+    </div>
+
+    <!-- Controls Guide (Inside Right Dock, never covers table) -->
+    <div id="controls-hint">
+      <div><strong>ಮಾರ್ಗದರ್ಶಿ • How to Use:</strong></div>
+      <div>1️⃣ <strong>ಪಾತ್ರೆ ಇರಿಸಿ:</strong> ಟೂಲ್‌ಬಾಕ್ಸ್‌ನಿಂದ 3 ಪಾತ್ರೆಗಳನ್ನು ಮೇಜಿಗೆ ಎಳೆಯಿರಿ.</div>
+      <div>2️⃣ <strong>ನೀರು ತೆಗೆದು ಹಾಕಿ:</strong> ಸಿರಿಂಜ್ ಅನ್ನು <strong>ನೀರಿನ ಬಟ್ಟಲಿನಲ್ಲಿ (Water Bowl)</strong> ಇರಿಸಿ ಪ್ಲಂಜರ್ ಮೇಲಕ್ಕೆ ಎಳೆಯಿರಿ (Pull to 20 ml), ನಂತರ ಪಾತ್ರೆಯ ಮೇಲೆ ತಂದು ಪ್ಲಂಜರ್ ಕೆಳಕ್ಕೆ ಒತ್ತಿ (Push Down) ಅಥವಾ ಕ್ಲಿಕ್ ಮಾಡಿ.</div>
+      <div>3️⃣ <strong>ಸ್ಟಾಪ್‌ವಾಚ್:</strong> 3D ಸ್ಟಾಪ್‌ವಾಚ್ ಕ್ಲಿಕ್ ಮಾಡಿ!</div>
+    </div>
+  </aside>
+
+  <!-- Confetti Overlay -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Result Pop-Up Modal -->
+  <div id="result-overlay">
+    <div id="result-modal">
+      <h2>🎉 ಪ್ರಯೋಗ ಪೂರ್ಣಗೊಂಡಿದೆ! • Experiment Complete!</h2>
+      <div class="result-cards">
+        <div class="res-card">
+          <div class="label">ತಟ್ಟೆ • Plate (Wide)</div>
+          <div class="val" id="res-plate-val" style="color:#fb7185;">20.0 ml</div>
+        </div>
+        <div class="res-card">
+          <div class="label">ಲೋಟ • Cup (Med)</div>
+          <div class="val" id="res-cup-val" style="color:#a78bfa;">0.0 ml</div>
+        </div>
+        <div class="res-card">
+          <div class="label">ಬಾಟಲಿ • Bottle (Narrow)</div>
+          <div class="val" id="res-bottle-val" style="color:#38bdf8;">0.0 ml</div>
+        </div>
+      </div>
+      <div class="result-summary-text" id="result-conclusion-text"></div>
+      <button class="btn-primary" id="btn-play-again">
+        🔄 ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ • Run Experiment Again
+      </button>
+    </div>
+  </div>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    // =========================================================================
+    // 1. SCENE, RENDERER, CAMERA & ORBIT CONTROLS (CENTERED IN UNOBSTRUCTED STAGE)
+    // =========================================================================
+    const stageEl = document.getElementById('stage-area');
+
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0xdbeafe, 0.011);
+
+    function getStageSize() {
+      return {
+        w: Math.max(320, stageEl.clientWidth),
+        h: Math.max(240, stageEl.clientHeight)
+      };
+    }
+
+    const initSize = getStageSize();
+    const camera = new THREE.PerspectiveCamera(46, initSize.w / initSize.h, 0.1, 200);
+    const DEFAULT_CAM_POS = new THREE.Vector3(0.0, 5.9, 10.4);
+    const DEFAULT_CAM_TARGET = new THREE.Vector3(0.0, 0.75, 0.1);
+    camera.position.copy(DEFAULT_CAM_POS);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+    renderer.setSize(initSize.w, initSize.h);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.08;
+    stageEl.appendChild(renderer.domElement);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.target.copy(DEFAULT_CAM_TARGET);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.07;
+    controls.maxPolarAngle = Math.PI * 0.46;
+    controls.minDistance = 4.2;
+    controls.maxDistance = 16.5;
+    controls.update();
+
+    // =========================================================================
+    // 2. PROCEDURAL TEXTURES & COMPACT NON-OBSTRUCTING 3D LABELS
+    // =========================================================================
+    function createWoodTexture() {
+      const c = document.createElement('canvas');
+      c.width = 512; c.height = 512;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#8b5a2b';
+      ctx.fillRect(0, 0, 512, 512);
+      for (let i = 0; i < 160; i++) {
+        const y = Math.random() * 512;
+        const h = 1 + Math.random() * 6;
+        ctx.fillStyle = Math.random() > 0.5 ? 'rgba(62, 34, 14, 0.22)' : 'rgba(180, 120, 62, 0.18)';
+        ctx.fillRect(0, y, 512, h);
+      }
+      ctx.strokeStyle = 'rgba(42, 22, 8, 0.45)';
+      ctx.lineWidth = 3;
+      for (let y = 128; y < 512; y += 128) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(512, y); ctx.stroke();
+      }
+      const tex = new THREE.CanvasTexture(c);
+      tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+      tex.repeat.set(2, 1);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      return tex;
+    }
+
+    function createPatioStoneTexture() {
+      const c = document.createElement('canvas');
+      c.width = 512; c.height = 512;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#cbd5e1';
+      ctx.fillRect(0, 0, 512, 512);
+      const tile = 128;
+      for (let x = 0; x < 512; x += tile) {
+        for (let y = 0; y < 512; y += tile) {
+          const shade = 195 + Math.floor(Math.random() * 32);
+          ctx.fillStyle = `rgb(${shade}, ${shade - 4}, ${shade - 10})`;
+          ctx.fillRect(x + 3, y + 3, tile - 6, tile - 6);
+          for (let s = 0; s < 35; s++) {
+            ctx.fillStyle = 'rgba(100,116,139,0.16)';
+            ctx.fillRect(x + 6 + Math.random() * (tile - 12), y + 6 + Math.random() * (tile - 12), 2, 2);
+          }
+        }
+      }
+      const tex = new THREE.CanvasTexture(c);
+      tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+      tex.repeat.set(14, 14);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      return tex;
+    }
+
+    function createVaporTexture() {
+      const c = document.createElement('canvas');
+      c.width = 128; c.height = 128;
+      const ctx = c.getContext('2d');
+      const grad = ctx.createRadialGradient(64, 64, 6, 64, 64, 60);
+      grad.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+      grad.addColorStop(0.4, 'rgba(240, 249, 255, 0.55)');
+      grad.addColorStop(0.75, 'rgba(224, 242, 254, 0.16)');
+      grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 128, 128);
+      return new THREE.CanvasTexture(c);
+    }
+
+    function createSyringeScaleTexture() {
+      const c = document.createElement('canvas');
+      c.width = 256; c.height = 512;
+      const ctx = c.getContext('2d');
+      ctx.clearRect(0, 0, 256, 512);
+      ctx.strokeStyle = 'rgba(15, 23, 42, 0.88)';
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.94)';
+      ctx.font = 'bold 28px Plus Jakarta Sans, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      for (let ml = 0; ml <= 20; ml += 1) {
+        const y = 460 - (ml / 20) * 408;
+        const isMajor = ml % 5 === 0;
+        ctx.lineWidth = isMajor ? 4 : 2;
+        ctx.beginPath(); ctx.moveTo(45, y); ctx.lineTo(isMajor ? 105 : 78, y); ctx.stroke();
+        if (isMajor) ctx.fillText(`${ml} ml`, 112, y);
+      }
+      const tex = new THREE.CanvasTexture(c);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      return tex;
+    }
+
+    function makeBillboardSprite(textTop, textBottom = '', bg = 'rgba(15,23,42,0.82)', border = '#38bdf8') {
+      const c = document.createElement('canvas');
+      c.width = 480; c.height = 120;
+      const ctx = c.getContext('2d');
+
+      function redraw(t1, t2, bCol = border) {
+        ctx.clearRect(0, 0, 480, 120);
+        ctx.fillStyle = bg;
+        ctx.strokeStyle = bCol;
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.roundRect(10, 10, 460, 100, 24);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = 'bold 27px "Plus Jakarta Sans", "Noto Sans Kannada", sans-serif';
+        if (t2) {
+          ctx.fillText(t1, 240, 41);
+          ctx.fillStyle = '#7dd3fc';
+          ctx.font = 'bold 23px "Plus Jakarta Sans", "Noto Sans Kannada", sans-serif';
+          ctx.fillText(t2, 240, 81);
+        } else {
+          ctx.fillText(t1, 240, 60);
+        }
+      }
+
+      redraw(textTop, textBottom);
+      const tex = new THREE.CanvasTexture(c);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: true });
+      const sprite = new THREE.Sprite(mat);
+      sprite.scale.set(1.18, 0.3, 1);
+      sprite.renderOrder = 8;
+      sprite.userData.updateLabel = (t1, t2, bCol = border) => {
+        redraw(t1, t2, bCol);
+        tex.needsUpdate = true;
+      };
+      return sprite;
+    }
+
+    // =========================================================================
+    // 3. OUTDOOR PATIO ENVIRONMENT & DYNAMIC SUNLIGHT
+    // =========================================================================
+    const TABLE_TOP_Y = 0;
+    const TABLE_W = 8.6;
+    const TABLE_D = 4.4;
+
+    const skyGeo = new THREE.SphereGeometry(95, 32, 24);
+    const skyUniforms = {
+      topColor: { value: new THREE.Color(0x0284c7) },
+      bottomColor: { value: new THREE.Color(0xe0f2fe) },
+      sunDir: { value: new THREE.Vector3(0.5, 0.7, -0.4).normalize() },
+      sunIntensity: { value: 0.75 }
+    };
+    const skyMat = new THREE.ShaderMaterial({
+      side: THREE.BackSide,
+      depthWrite: false,
+      uniforms: skyUniforms,
+      vertexShader: `
+        varying vec3 vWorldPos;
+        void main() {
+          vec4 wp = modelMatrix * vec4(position, 1.0);
+          vWorldPos = wp.xyz;
+          gl_Position = projectionMatrix * viewMatrix * wp;
+        }
+      `,
+      fragmentShader: `
+        uniform vec3 topColor;
+        uniform vec3 bottomColor;
+        uniform vec3 sunDir;
+        uniform float sunIntensity;
+        varying vec3 vWorldPos;
+        void main() {
+          vec3 dir = normalize(vWorldPos);
+          float h = clamp(dir.y * 1.15 + 0.1, 0.0, 1.0);
+          vec3 col = mix(bottomColor, topColor, pow(h, 0.65));
+          float sunDot = max(dot(dir, normalize(sunDir)), 0.0);
+          col += vec3(1.0, 0.92, 0.68) * pow(sunDot, 28.0) * (0.25 + sunIntensity * 0.75);
+          col += vec3(1.0, 0.98, 0.88) * pow(sunDot, 240.0) * (0.5 + sunIntensity * 1.2);
+          gl_FragColor = vec4(col, 1.0);
+        }
+      `
+    });
+    scene.add(new THREE.Mesh(skyGeo, skyMat));
+
+    const sunOrb = new THREE.Mesh(
+      new THREE.SphereGeometry(2.6, 24, 24),
+      new THREE.MeshBasicMaterial({ color: 0xfff7cc })
+    );
+    sunOrb.position.set(16, 19, -15);
+    scene.add(sunOrb);
+
+    const hemiLight = new THREE.HemisphereLight(0xe0f2fe, 0x78716c, 0.7);
+    scene.add(hemiLight);
+
+    const sunLight = new THREE.DirectionalLight(0xfffbeb, 2.3);
+    sunLight.position.set(9.5, 13.5, 6.5);
+    sunLight.castShadow = true;
+    sunLight.shadow.mapSize.set(2048, 2048);
+    sunLight.shadow.camera.near = 1;
+    sunLight.shadow.camera.far = 36;
+    const d = 7.5;
+    sunLight.shadow.camera.left = -d;
+    sunLight.shadow.camera.right = d;
+    sunLight.shadow.camera.top = d;
+    sunLight.shadow.camera.bottom = -d;
+    sunLight.shadow.bias = -0.0005;
+    scene.add(sunLight);
+
+    const fillLight = new THREE.DirectionalLight(0xbae6fd, 0.45);
+    fillLight.position.set(-7, 5, -6);
+    scene.add(fillLight);
+
+    const FLOOR_Y = -2.35;
+    const patioFloor = new THREE.Mesh(
+      new THREE.PlaneGeometry(60, 60),
+      new THREE.MeshStandardMaterial({ map: createPatioStoneTexture(), roughness: 0.85, metalness: 0.05 })
+    );
+    patioFloor.rotation.x = -Math.PI / 2;
+    patioFloor.position.y = FLOOR_Y;
+    patioFloor.receiveShadow = true;
+    scene.add(patioFloor);
+
+    const grassRing = new THREE.Mesh(
+      new THREE.RingGeometry(16, 55, 48),
+      new THREE.MeshStandardMaterial({ color: 0x4d7c0f, roughness: 0.95 })
+    );
+    grassRing.rotation.x = -Math.PI / 2;
+    grassRing.position.y = FLOOR_Y + 0.01;
+    grassRing.receiveShadow = true;
+    scene.add(grassRing);
+
+    const pergolaMat = new THREE.MeshStandardMaterial({ color: 0x5c3a21, roughness: 0.82 });
+    [[-6.5, -5.2], [6.5, -5.2], [-6.5, 5.2], [6.5, 5.2]].forEach(([px, pz]) => {
+      const post = new THREE.Mesh(new THREE.BoxGeometry(0.28, 7.2, 0.28), pergolaMat);
+      post.position.set(px, FLOOR_Y + 3.6, pz);
+      post.castShadow = true;
+      post.receiveShadow = true;
+      scene.add(post);
+    });
+    for (let x = -6.2; x <= 6.2; x += 1.55) {
+      const rafter = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.22, 11.2), pergolaMat);
+      rafter.position.set(x, FLOOR_Y + 7.2, 0);
+      rafter.castShadow = true;
+      scene.add(rafter);
+    }
+
+    const potMat = new THREE.MeshStandardMaterial({ color: 0xb45309, roughness: 0.75 });
+    const leafMat = new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.8 });
+    [[-5.8, -3.6], [5.8, -3.6], [-6.0, 2.5], [6.0, 2.5]].forEach(([px, pz]) => {
+      const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.48, 0.34, 0.68, 18), potMat);
+      pot.position.set(px, FLOOR_Y + 0.34, pz);
+      pot.castShadow = true; pot.receiveShadow = true;
+      scene.add(pot);
+      const bush = new THREE.Mesh(new THREE.DodecahedronGeometry(0.65, 1), leafMat);
+      bush.position.set(px, FLOOR_Y + 0.98, pz);
+      bush.castShadow = true;
+      scene.add(bush);
+    });
+
+    // =========================================================================
+    // 4. LAB TABLE, TOOLBOX ZONE, WATER BOWL & SIDE-BY-SIDE PLACEMENT PADS
+    // =========================================================================
+    const woodTex = createWoodTexture();
+    const tableGroup = new THREE.Group();
+    scene.add(tableGroup);
+
+    const tableTop = new THREE.Mesh(
+      new THREE.BoxGeometry(TABLE_W, 0.2, TABLE_D),
+      new THREE.MeshStandardMaterial({ map: woodTex, roughness: 0.6, metalness: 0.04 })
+    );
+    tableTop.position.set(0, TABLE_TOP_Y - 0.1, 0);
+    tableTop.receiveShadow = true;
+    tableTop.castShadow = true;
+    tableGroup.add(tableTop);
+
+    const legMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.45, metalness: 0.55 });
+    const legH = TABLE_TOP_Y - 0.2 - FLOOR_Y;
+    [[-3.95, -1.85], [3.95, -1.85], [-3.95, 1.85], [3.95, 1.85]].forEach(([lx, lz]) => {
+      const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.08, legH, 16), legMat);
+      leg.position.set(lx, FLOOR_Y + legH / 2, lz);
+      leg.castShadow = true;
+      tableGroup.add(leg);
+    });
+
+    // Toolbox Tray on the Left Side of Table
+    const TOOLBOX_POS = new THREE.Vector3(-2.9, TABLE_TOP_Y, 0.0);
+    const toolboxBase = new THREE.Mesh(
+      new THREE.BoxGeometry(2.3, 0.05, 3.85),
+      new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.5, metalness: 0.35 })
+    );
+    toolboxBase.position.set(TOOLBOX_POS.x, TABLE_TOP_Y + 0.025, TOOLBOX_POS.z);
+    toolboxBase.receiveShadow = true;
+    tableGroup.add(toolboxBase);
+
+    const toolboxRim = new THREE.Mesh(
+      new THREE.BoxGeometry(2.37, 0.07, 3.92),
+      new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.3, metalness: 0.5, emissive: 0x0369a1, emissiveIntensity: 0.25 })
+    );
+    toolboxRim.position.set(TOOLBOX_POS.x, TABLE_TOP_Y + 0.015, TOOLBOX_POS.z);
+    tableGroup.add(toolboxRim);
+
+    const toolboxLabel = makeBillboardSprite('ಟೂಲ್‌ಬಾಕ್ಸ್ • Toolbox', 'ಪಾತ್ರೆಗಳನ್ನು ಎಳೆಯಿರಿ', 'rgba(15,23,42,0.85)', '#38bdf8');
+    toolboxLabel.position.set(TOOLBOX_POS.x, 0.25, -2.05);
+    scene.add(toolboxLabel);
+
+    // 3 Experiment Placement Pads Side-by-Side (Center/Right of Table)
+    const PLACEMENT_SLOTS = {
+      bottle: { pos: new THREE.Vector3(-0.3, TABLE_TOP_Y, -0.35), color: 0x38bdf8 },
+      cup:    { pos: new THREE.Vector3(1.2, TABLE_TOP_Y, -0.35),  color: 0xa78bfa },
+      plate:  { pos: new THREE.Vector3(2.95, TABLE_TOP_Y, -0.35), color: 0xfb7185 }
+    };
+
+    const slotRings = {};
+    Object.entries(PLACEMENT_SLOTS).forEach(([key, slot]) => {
+      const r = key === 'plate' ? 1.15 : 0.62;
+      const ring = new THREE.Mesh(
+        new THREE.RingGeometry(r - 0.07, r, 48),
+        new THREE.MeshBasicMaterial({ color: slot.color, side: THREE.DoubleSide, transparent: true, opacity: 0.7 })
+      );
+      ring.rotation.x = -Math.PI / 2;
+      ring.position.set(slot.pos.x, TABLE_TOP_Y + 0.006, slot.pos.z);
+      scene.add(ring);
+      slotRings[key] = ring;
+
+      const padFill = new THREE.Mesh(
+        new THREE.CircleGeometry(r - 0.07, 48),
+        new THREE.MeshBasicMaterial({ color: slot.color, transparent: true, opacity: 0.1 })
+      );
+      padFill.rotation.x = -Math.PI / 2;
+      padFill.position.set(slot.pos.x, TABLE_TOP_Y + 0.004, slot.pos.z);
+      scene.add(padFill);
+    });
+
+    // =========================================================================
+    // 5. WATER BOWL (SOURCE OF BLUE WATER FOR SYRINGE)
+    // =========================================================================
+    const BOWL_POS = new THREE.Vector3(-0.9, TABLE_TOP_Y, 1.35);
+    const bowlGroup = new THREE.Group();
+    bowlGroup.position.copy(BOWL_POS);
+    scene.add(bowlGroup);
+
+    const glassMat = new THREE.MeshPhysicalMaterial({
+      color: 0xe0f2fe,
+      transparent: true,
+      opacity: 0.3,
+      roughness: 0.06,
+      metalness: 0.05,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.05,
+      depthWrite: false,
+      side: THREE.DoubleSide
+    });
+
+    const waterMat = new THREE.MeshStandardMaterial({
+      color: 0x0ea5e9,
+      emissive: 0x0369a1,
+      emissiveIntensity: 0.25,
+      transparent: true,
+      opacity: 0.84,
+      roughness: 0.1,
+      metalness: 0.08
+    });
+
+    // Bowl geometry (wide clear glass bowl with blue water inside)
+    const bowlBase = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.42, 0.04, 36), glassMat);
+    bowlBase.position.y = 0.02;
+    bowlBase.renderOrder = 2;
+
+    const bowlWall = new THREE.Mesh(new THREE.CylinderGeometry(0.68, 0.45, 0.56, 36, 1, true), glassMat);
+    bowlWall.position.y = 0.04 + 0.28;
+    bowlWall.renderOrder = 2;
+    bowlWall.castShadow = true;
+
+    const bowlRim = new THREE.Mesh(
+      new THREE.TorusGeometry(0.68, 0.026, 12, 36),
+      new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.25 })
+    );
+    bowlRim.rotation.x = Math.PI / 2;
+    bowlRim.position.y = 0.6;
+
+    // Bowl Water Reservoir (starts at 100 ml, drops slightly as user takes 20 ml at a time)
+    const bowlWaterMaxH = 0.42;
+    const bowlWaterMesh = new THREE.Mesh(
+      (() => {
+        const g = new THREE.CylinderGeometry(0.61, 0.43, bowlWaterMaxH, 36);
+        g.translate(0, bowlWaterMaxH / 2, 0);
+        return g;
+      })(),
+      waterMat.clone()
+    );
+    bowlWaterMesh.position.y = 0.04;
+    bowlWaterMesh.renderOrder = 1;
+    bowlWaterMesh.userData = { rBot: 0.43, rTop: 0.61, maxH: bowlWaterMaxH, lastF: 1 };
+
+    // Invisible click target on Water Bowl so clicking it docks syringe into bowl
+    const bowlHit = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.72, 0.48, 0.65, 20),
+      new THREE.MeshBasicMaterial({ visible: false })
+    );
+    bowlHit.position.y = 0.32;
+    bowlHit.userData.kind = 'water_bowl';
+
+    // Glowing ring around bowl when user needs to fill syringe
+    const bowlGlowRing = new THREE.Mesh(
+      new THREE.RingGeometry(0.72, 0.8, 40),
+      new THREE.MeshBasicMaterial({ color: 0x38bdf8, side: THREE.DoubleSide, transparent: true, opacity: 0.55 })
+    );
+    bowlGlowRing.rotation.x = -Math.PI / 2;
+    bowlGlowRing.position.y = 0.008;
+
+    const bowlLabel = makeBillboardSprite('ನೀರಿನ ಬಟ್ಟಲು • Water Bowl', 'ಸಿರಿಂಜ್‌ಗೆ ನೀರು ತೆಗೆಯಿರಿ', 'rgba(15,23,42,0.88)', '#38bdf8');
+    bowlLabel.position.set(0, 0.16, 0.88);
+    bowlGroup.add(bowlBase, bowlWall, bowlRim, bowlWaterMesh, bowlHit, bowlGlowRing, bowlLabel);
+
+    // =========================================================================
+    // 6. CONTAINERS (BOTTLE, CUP, PLATE) & DYNAMIC WATER VOLUME MESHES
+    // =========================================================================
+    function buildContainerWaterMesh(rBot, rTop, maxH) {
+      const geo = new THREE.CylinderGeometry(rTop, rBot, maxH, 36, 1, false);
+      geo.translate(0, maxH / 2, 0);
+      const mesh = new THREE.Mesh(geo, waterMat.clone());
+      mesh.renderOrder = 1;
+      mesh.visible = false;
+      mesh.userData = { rBot, rTop, maxH, lastF: -1 };
+      return mesh;
+    }
+
+    function updateWaterVolumeVisual(waterMesh, fraction) {
+      const f = Math.max(0, Math.min(1, fraction));
+      if (f <= 0.002) {
+        waterMesh.visible = false;
+        waterMesh.userData.lastF = 0;
+        return;
+      }
+      waterMesh.visible = true;
+      if (Math.abs(f - waterMesh.userData.lastF) < 0.002 && f < 0.998) return;
+      waterMesh.userData.lastF = f;
+      const { rBot, rTop, maxH } = waterMesh.userData;
+      const currentH = Math.max(0.005, maxH * f);
+      const currentTopR = THREE.MathUtils.lerp(rBot, rTop, f);
+
+      waterMesh.geometry.dispose();
+      const newGeo = new THREE.CylinderGeometry(currentTopR, rBot, currentH, 36);
+      newGeo.translate(0, currentH / 2, 0);
+      waterMesh.geometry = newGeo;
+    }
+
+    const containers = {};
+
+    // --- A. NARROW BOTTLE ---
+    {
+      const group = new THREE.Group();
+      const homePos = new THREE.Vector3(TOOLBOX_POS.x - 0.56, TABLE_TOP_Y + 0.05, -1.2);
+      group.position.copy(homePos);
+
+      const base = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.38, 0.04, 32), glassMat);
+      base.position.y = 0.02; base.renderOrder = 2;
+
+      const body = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.38, 1.05, 32, 1, true), glassMat);
+      body.position.y = 0.04 + 0.525; body.renderOrder = 2; body.castShadow = true;
+
+      const shoulder = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.38, 0.35, 32, 1, true), glassMat);
+      shoulder.position.y = 1.09 + 0.175; shoulder.renderOrder = 2;
+
+      const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.32, 28, 1, true), glassMat);
+      neck.position.y = 1.44 + 0.16; neck.renderOrder = 2;
+
+      const lip = new THREE.Mesh(
+        new THREE.TorusGeometry(0.145, 0.022, 12, 28),
+        new THREE.MeshStandardMaterial({ color: 0xbae6fd, roughness: 0.2, transparent: true, opacity: 0.75 })
+      );
+      lip.rotation.x = Math.PI / 2; lip.position.y = 1.76;
+
+      const hitMesh = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.45, 0.45, 1.85, 16),
+        new THREE.MeshBasicMaterial({ visible: false })
+      );
+      hitMesh.position.y = 0.92;
+      hitMesh.userData.dragTarget = group;
+
+      const waterMesh = buildContainerWaterMesh(0.355, 0.355, 0.98);
+      waterMesh.position.y = 0.04;
+
+      const label = makeBillboardSprite('A. ಬಾಟಲಿ • Bottle', '0.0 ml', 'rgba(15,23,42,0.85)', '#38bdf8');
+      label.position.set(0, 0.16, 0.72); // Tucked neatly at front base so it never blocks syringe above!
+
+      const shadowDisc = new THREE.Mesh(
+        new THREE.CircleGeometry(0.42, 24),
+        new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.28 })
+      );
+      shadowDisc.rotation.x = -Math.PI / 2; shadowDisc.position.y = 0.005; shadowDisc.visible = false;
+
+      group.add(base, body, shoulder, neck, lip, hitMesh, waterMesh, label, shadowDisc);
+      scene.add(group);
+
+      containers.bottle = {
+        id: 'bottle', nameKn: 'ಸಣ್ಣ ಬಾಟಲಿ', nameEn: 'Narrow Bottle',
+        group, homePos: homePos.clone(), waterMesh,
+        waterBaseY: 0.04, pourY: 1.76, vaporBaseY: 1.78, vaporRadius: 0.11,
+        evapRateCoeff: 0.11, placed: false, waterMl: 0, label, shadowDisc
+      };
+    }
+
+    // --- B. PLASTIC CUP ---
+    {
+      const group = new THREE.Group();
+      const homePos = new THREE.Vector3(TOOLBOX_POS.x + 0.56, TABLE_TOP_Y + 0.05, -0.98);
+      group.position.copy(homePos);
+
+      const cupMat = new THREE.MeshPhysicalMaterial({
+        color: 0xede9fe, transparent: true, opacity: 0.34,
+        roughness: 0.18, clearcoat: 0.8, depthWrite: false, side: THREE.DoubleSide
+      });
+
+      const base = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.36, 0.03, 32), cupMat);
+      base.position.y = 0.015; base.renderOrder = 2;
+
+      const wall = new THREE.Mesh(new THREE.CylinderGeometry(0.52, 0.36, 1.05, 32, 1, true), cupMat);
+      wall.position.y = 0.03 + 0.525; wall.renderOrder = 2; wall.castShadow = true;
+
+      const rim = new THREE.Mesh(
+        new THREE.TorusGeometry(0.52, 0.025, 12, 36),
+        new THREE.MeshStandardMaterial({ color: 0xc4b5fd, roughness: 0.3 })
+      );
+      rim.rotation.x = Math.PI / 2; rim.position.y = 1.08;
+
+      const hitMesh = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.56, 0.42, 1.15, 16),
+        new THREE.MeshBasicMaterial({ visible: false })
+      );
+      hitMesh.position.y = 0.58;
+      hitMesh.userData.dragTarget = group;
+
+      const waterMesh = buildContainerWaterMesh(0.34, 0.47, 0.85);
+      waterMesh.position.y = 0.03;
+
+      const label = makeBillboardSprite('B. ಲೋಟ • Cup', '0.0 ml', 'rgba(15,23,42,0.85)', '#a78bfa');
+      label.position.set(0, 0.16, 0.72);
+
+      const shadowDisc = new THREE.Mesh(
+        new THREE.CircleGeometry(0.45, 24),
+        new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.28 })
+      );
+      shadowDisc.rotation.x = -Math.PI / 2; shadowDisc.position.y = 0.005; shadowDisc.visible = false;
+
+      group.add(base, wall, rim, hitMesh, waterMesh, label, shadowDisc);
+      scene.add(group);
+
+      containers.cup = {
+        id: 'cup', nameKn: 'ಪ್ಲಾಸ್ಟಿಕ್ ಲೋಟ', nameEn: 'Plastic Cup',
+        group, homePos: homePos.clone(), waterMesh,
+        waterBaseY: 0.03, pourY: 1.12, vaporBaseY: 0.95, vaporRadius: 0.44,
+        evapRateCoeff: 0.42, placed: false, waterMl: 0, label, shadowDisc
+      };
+    }
+
+    // --- C. WIDE PLATE ---
+    {
+      const group = new THREE.Group();
+      const homePos = new THREE.Vector3(TOOLBOX_POS.x, TABLE_TOP_Y + 0.05, 0.42);
+      group.position.copy(homePos);
+
+      const plateMat = new THREE.MeshStandardMaterial({
+        color: 0xf8fafc, roughness: 0.22, metalness: 0.05, side: THREE.DoubleSide
+      });
+
+      const bottom = new THREE.Mesh(new THREE.CylinderGeometry(0.82, 0.78, 0.04, 48), plateMat);
+      bottom.position.y = 0.02; bottom.castShadow = true; bottom.receiveShadow = true;
+
+      const slopedRim = new THREE.Mesh(new THREE.CylinderGeometry(1.08, 0.82, 0.19, 48, 1, true), plateMat);
+      slopedRim.position.y = 0.04 + 0.095; slopedRim.castShadow = true; slopedRim.receiveShadow = true;
+
+      const rimLip = new THREE.Mesh(
+        new THREE.TorusGeometry(1.08, 0.025, 12, 48),
+        new THREE.MeshStandardMaterial({ color: 0xfda4af, roughness: 0.3 })
+      );
+      rimLip.rotation.x = Math.PI / 2; rimLip.position.y = 0.23;
+
+      const hitMesh = new THREE.Mesh(
+        new THREE.CylinderGeometry(1.12, 0.9, 0.35, 24),
+        new THREE.MeshBasicMaterial({ visible: false })
+      );
+      hitMesh.position.y = 0.17;
+      hitMesh.userData.dragTarget = group;
+
+      const waterMesh = buildContainerWaterMesh(0.79, 0.95, 0.13);
+      waterMesh.position.y = 0.042;
+
+      const label = makeBillboardSprite('C. ತಟ್ಟೆ • Plate', '0.0 ml', 'rgba(15,23,42,0.85)', '#fb7185');
+      label.position.set(0, 0.16, 1.25);
+
+      const shadowDisc = new THREE.Mesh(
+        new THREE.CircleGeometry(0.95, 32),
+        new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.25 })
+      );
+      shadowDisc.rotation.x = -Math.PI / 2; shadowDisc.position.y = 0.005; shadowDisc.visible = false;
+
+      group.add(bottom, slopedRim, rimLip, hitMesh, waterMesh, label, shadowDisc);
+      scene.add(group);
+
+      containers.plate = {
+        id: 'plate', nameKn: 'ಅಗಲವಾದ ತಟ್ಟೆ', nameEn: 'Wide Plate',
+        group, homePos: homePos.clone(), waterMesh,
+        waterBaseY: 0.042, pourY: 0.36, vaporBaseY: 0.16, vaporRadius: 0.92,
+        evapRateCoeff: 1.0, placed: false, waterMl: 0, label, shadowDisc
+      };
+    }
+
+    Object.values(containers).forEach(c => {
+      c.group.userData.kind = 'container';
+      c.group.userData.containerId = c.id;
+    });
+
+    // =========================================================================
+    // 7. 3D INTERACTIVE SYRINGE (DIP IN BOWL -> PULL PLUNGER -> MOVE -> PUSH/CLICK)
+    // =========================================================================
+    const syringeGroup = new THREE.Group();
+    const SYRINGE_HOME_POS = new THREE.Vector3(TOOLBOX_POS.x - 0.58, TABLE_TOP_Y + 0.05, 1.55);
+    // Dipping position places the needle tip submerged cleanly inside the Water Bowl
+    const SYRINGE_BOWL_DIP_POS = new THREE.Vector3(BOWL_POS.x, TABLE_TOP_Y + 0.22, BOWL_POS.z);
+    syringeGroup.position.copy(SYRINGE_HOME_POS);
+    scene.add(syringeGroup);
+
+    const syringeStand = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.26, 0.32, 0.06, 24),
+      new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.6, roughness: 0.35 })
+    );
+    syringeStand.position.set(SYRINGE_HOME_POS.x, TABLE_TOP_Y + 0.08, SYRINGE_HOME_POS.z);
+    scene.add(syringeStand);
+
+    const syringeRig = new THREE.Group();
+    syringeGroup.add(syringeRig);
+
+    const metalMat = new THREE.MeshStandardMaterial({ color: 0xcbd5e1, metalness: 0.85, roughness: 0.2 });
+    const nozzleCone = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.022, 0.16, 20), metalMat);
+    nozzleCone.position.y = 0.22;
+    const needle = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.008, 0.16, 12), metalMat);
+    needle.position.y = 0.08;
+    syringeRig.add(nozzleCone, needle);
+
+    const BARREL_BASE_Y = 0.30;
+    const BARREL_H = 0.80;
+    const BARREL_R = 0.135;
+
+    const barrelGlass = new THREE.Mesh(
+      new THREE.CylinderGeometry(BARREL_R, BARREL_R, BARREL_H, 28, 1, true),
+      glassMat
+    );
+    barrelGlass.position.y = BARREL_BASE_Y + BARREL_H / 2;
+    barrelGlass.renderOrder = 2;
+    barrelGlass.castShadow = true;
+
+    const barrelScaleOverlay = new THREE.Mesh(
+      new THREE.CylinderGeometry(BARREL_R + 0.002, BARREL_R + 0.002, BARREL_H * 0.92, 28, 1, true),
+      new THREE.MeshBasicMaterial({ map: createSyringeScaleTexture(), transparent: true, side: THREE.DoubleSide, depthWrite: false })
+    );
+    barrelScaleOverlay.position.y = BARREL_BASE_Y + BARREL_H / 2;
+    barrelScaleOverlay.rotation.y = -Math.PI * 0.45;
+    barrelScaleOverlay.renderOrder = 3;
+
+    const flange = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.22, 0.22, 0.04, 24),
+      new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.35 })
+    );
+    flange.position.y = BARREL_BASE_Y + BARREL_H;
+
+    const barrelHit = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.28, 0.28, 0.96, 16),
+      new THREE.MeshBasicMaterial({ visible: false })
+    );
+    barrelHit.position.y = 0.56;
+    barrelHit.userData.kind = 'syringe_barrel';
+
+    syringeRig.add(barrelGlass, barrelScaleOverlay, flange, barrelHit);
+
+    const SYRINGE_MAX_WATER_H = 0.68;
+    const syringeWaterGeo = new THREE.CylinderGeometry(BARREL_R * 0.88, BARREL_R * 0.88, 1, 24);
+    syringeWaterGeo.translate(0, 0.5, 0);
+    const syringeWater = new THREE.Mesh(
+      syringeWaterGeo,
+      new THREE.MeshStandardMaterial({
+        color: 0x0284c7, emissive: 0x0ea5e9, emissiveIntensity: 0.35,
+        transparent: true, opacity: 0.88, roughness: 0.1
+      })
+    );
+    syringeWater.position.y = BARREL_BASE_Y + 0.02;
+    syringeWater.scale.y = 0.001;
+    syringeWater.visible = false;
+    syringeWater.renderOrder = 1;
+    syringeRig.add(syringeWater);
+
+    // Movable Plunger Group
+    const plungerGroup = new THREE.Group();
+    const PLUNGER_MIN_Y = BARREL_BASE_Y + 0.02;
+    const PLUNGER_MAX_Y = BARREL_BASE_Y + 0.02 + SYRINGE_MAX_WATER_H;
+    plungerGroup.position.y = PLUNGER_MIN_Y;
+    syringeRig.add(plungerGroup);
+
+    const rubberSeal = new THREE.Mesh(
+      new THREE.CylinderGeometry(BARREL_R * 0.87, BARREL_R * 0.87, 0.07, 24),
+      new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.7 })
+    );
+    rubberSeal.position.y = 0.035;
+
+    const plungerStem = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.034, 0.034, 0.85, 16),
+      new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.3, metalness: 0.3 })
+    );
+    plungerStem.position.y = 0.07 + 0.425;
+
+    const thumbCap = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.22, 0.2, 0.08, 24),
+      new THREE.MeshStandardMaterial({ color: 0x38bdf8, emissive: 0x0284c7, emissiveIntensity: 0.55, roughness: 0.25 })
+    );
+    thumbCap.position.y = 0.96;
+
+    // Generous collider covering plunger stem & cap strictly above barrelHit
+    const plungerHit = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.38, 0.38, 0.52, 16),
+      new THREE.MeshBasicMaterial({ visible: false })
+    );
+    plungerHit.position.y = 0.96;
+    plungerHit.userData.kind = 'syringe_plunger';
+
+    plungerGroup.add(rubberSeal, plungerStem, thumbCap, plungerHit);
+
+    // Compact digital ml readout tucked tightly beside barrel
+    const syringeDigitalLabel = makeBillboardSprite('ಸಿರಿಂಜ್ • Syringe', '0.0 ml', 'rgba(15,23,42,0.92)', '#38bdf8');
+    syringeDigitalLabel.position.set(0.65, 0.78, 0);
+    syringeDigitalLabel.scale.set(0.95, 0.26, 1);
+    syringeRig.add(syringeDigitalLabel);
+
+    // Live pouring water jet stream (visible during both manual plunger push & click inject)
+    const pourStream = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.04, 0.055, 1, 14),
+      new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.9 })
+    );
+    pourStream.visible = false;
+    scene.add(pourStream);
+
+    // =========================================================================
+    // 8. 3D STOPWATCH ON THE TABLE
+    // =========================================================================
+    const stopwatchGroup = new THREE.Group();
+    const STOPWATCH_POS = new THREE.Vector3(TOOLBOX_POS.x + 0.58, TABLE_TOP_Y + 0.05, 1.48);
+    stopwatchGroup.position.copy(STOPWATCH_POS);
+    scene.add(stopwatchGroup);
+
+    const watchStand = new THREE.Mesh(
+      new THREE.BoxGeometry(0.75, 0.08, 0.62),
+      new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.5, roughness: 0.4 })
+    );
+    watchStand.position.y = 0.04; watchStand.castShadow = true;
+    stopwatchGroup.add(watchStand);
+
+    const watchTilt = new THREE.Group();
+    watchTilt.position.set(0, 0.46, 0);
+    watchTilt.rotation.x = -0.38;
+    stopwatchGroup.add(watchTilt);
+
+    const chromeMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.9, roughness: 0.15 });
+    const watchBody = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.16, 36), chromeMat);
+    watchBody.rotation.x = Math.PI / 2; watchBody.castShadow = true;
+    watchTilt.add(watchBody);
+
+    const crownButton = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.085, 0.085, 0.16, 20),
+      new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.3, metalness: 0.4, emissive: 0x991b1b, emissiveIntensity: 0.35 })
+    );
+    crownButton.position.set(0, 0.49, 0);
+    watchTilt.add(crownButton);
+
+    const watchCanvas = document.createElement('canvas');
+    watchCanvas.width = 256; watchCanvas.height = 256;
+    const watchCtx = watchCanvas.getContext('2d');
+    const watchFaceTex = new THREE.CanvasTexture(watchCanvas);
+    watchFaceTex.colorSpace = THREE.SRGBColorSpace;
+
+    function drawStopwatchFace(simMinutes, isRunning) {
+      const ctx = watchCtx;
+      ctx.clearRect(0, 0, 256, 256);
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath(); ctx.arc(128, 128, 122, 0, Math.PI * 2); ctx.fill();
+
+      ctx.strokeStyle = isRunning ? '#34d399' : '#38bdf8';
+      ctx.lineWidth = 6;
+      ctx.beginPath(); ctx.arc(128, 128, 114, 0, Math.PI * 2); ctx.stroke();
+
+      for (let i = 0; i < 12; i++) {
+        const a = (i / 12) * Math.PI * 2 - Math.PI / 2;
+        ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(128 + Math.cos(a) * 95, 128 + Math.sin(a) * 95);
+        ctx.lineTo(128 + Math.cos(a) * 107, 128 + Math.sin(a) * 107);
+        ctx.stroke();
+      }
+
+      const hrs = Math.floor(simMinutes / 60);
+      const mins = Math.floor(simMinutes % 60);
+      ctx.fillStyle = isRunning ? '#4ade80' : '#fde047';
+      ctx.font = 'bold 28px Plus Jakarta Sans, monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(`${hrs}h ${String(mins).padStart(2, '0')}m`, 128, 185);
+
+      ctx.fillStyle = '#cbd5e1';
+      ctx.font = 'bold 16px Plus Jakarta Sans, sans-serif';
+      ctx.fillText(isRunning ? 'RUNNING' : 'CLICK START', 128, 72);
+
+      const handAngle = ((simMinutes % 60) / 60) * Math.PI * 2 - Math.PI / 2;
+      ctx.strokeStyle = '#fb7185'; ctx.lineWidth = 5;
+      ctx.beginPath(); ctx.moveTo(128, 128);
+      ctx.lineTo(128 + Math.cos(handAngle) * 86, 128 + Math.sin(handAngle) * 86);
+      ctx.stroke();
+
+      ctx.fillStyle = '#f8fafc';
+      ctx.beginPath(); ctx.arc(128, 128, 8, 0, Math.PI * 2); ctx.fill();
+      watchFaceTex.needsUpdate = true;
+    }
+
+    drawStopwatchFace(0, false);
+    const watchFace = new THREE.Mesh(
+      new THREE.CircleGeometry(0.37, 36),
+      new THREE.MeshBasicMaterial({ map: watchFaceTex })
+    );
+    watchFace.position.z = 0.085;
+    watchTilt.add(watchFace);
+
+    const watchHit = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.5, 0.5, 1.0, 16),
+      new THREE.MeshBasicMaterial({ visible: false })
+    );
+    watchHit.position.set(0, 0.5, 0);
+    watchHit.userData.kind = 'stopwatch';
+    stopwatchGroup.add(watchHit);
+
+    const watchLabel = makeBillboardSprite('ಸ್ಟಾಪ್‌ವಾಚ್ • Stopwatch', 'ಪ್ರಾರಂಭಿಸಲು ಕ್ಲಿಕ್ ಮಾಡಿ', 'rgba(15,23,42,0.88)', '#fbbf24');
+    watchLabel.position.set(0, 0.14, 0.58);
+    stopwatchGroup.add(watchLabel);
+
+    // =========================================================================
+    // 9. VAPOR PARTICLE SYSTEM (STEAM)
+    // =========================================================================
+    const vaporTex = createVaporTexture();
+    const vaporParticles = [];
+    const vaporGroup = new THREE.Group();
+    scene.add(vaporGroup);
+
+    function spawnVaporParticle(container, intensityFactor) {
+      const mat = new THREE.SpriteMaterial({
+        map: vaporTex, color: 0xf8fafc, transparent: true, opacity: 0, depthWrite: false
+      });
+      const sprite = new THREE.Sprite(mat);
+
+      const angle = Math.random() * Math.PI * 2;
+      const rad = Math.sqrt(Math.random()) * container.vaporRadius;
+      const startX = container.group.position.x + Math.cos(angle) * rad;
+      const startZ = container.group.position.z + Math.sin(angle) * rad;
+      const startY = container.vaporBaseY + 0.05;
+
+      sprite.position.set(startX, startY, startZ);
+      const baseScale = container.id === 'plate'
+        ? 0.36 + Math.random() * 0.25
+        : (container.id === 'cup' ? 0.24 + Math.random() * 0.15 : 0.14 + Math.random() * 0.08);
+      sprite.scale.set(baseScale, baseScale, 1);
+      sprite.renderOrder = 5;
+      vaporGroup.add(sprite);
+
+      vaporParticles.push({
+        sprite, age: 0, life: 1.4 + Math.random() * 1.1,
+        vy: (0.45 + Math.random() * 0.35) * (0.7 + intensityFactor * 0.6),
+        vx: (Math.random() - 0.35) * 0.14,
+        vz: (Math.random() - 0.5) * 0.1,
+        maxOpacity: container.id === 'plate' ? 0.44 : (container.id === 'cup' ? 0.32 : 0.24),
+        baseScale,
+        growRate: container.id === 'plate' ? 0.55 : 0.32
+      });
+    }
+
+    function updateVaporParticles(dt) {
+      for (let i = vaporParticles.length - 1; i >= 0; i--) {
+        const p = vaporParticles[i];
+        p.age += dt;
+        const t = p.age / p.life;
+        if (t >= 1) {
+          vaporGroup.remove(p.sprite);
+          p.sprite.material.dispose();
+          vaporParticles.splice(i, 1);
+          continue;
+        }
+        p.sprite.position.y += p.vy * dt;
+        p.sprite.position.x += (p.vx + Math.sin(p.age * 3.0) * 0.08) * dt;
+        p.sprite.position.z += p.vz * dt;
+        const s = p.baseScale * (1 + t * p.growRate);
+        p.sprite.scale.set(s, s, 1);
+        const fade = t < 0.2 ? (t / 0.2) : (1 - (t - 0.2) / 0.8);
+        p.sprite.material.opacity = p.maxOpacity * Math.max(0, fade);
+      }
+    }
+
+    // =========================================================================
+    // 10. SIMULATION STATE, WATER BOWL + SYRINGE PULL/PUSH & RAYCASTER ENGINE
+    // =========================================================================
+    const simState = {
+      sunIntensity: 75,
+      bowlWaterMl: 100.0, // Generous 100 ml blue water reservoir in bowl
+      syringeMl: 0,
+      syringeZone: 'stand', // 'stand' | 'bowl' | 'container' | 'free'
+      targetContainerId: null,
+      injecting: false,
+      running: false,
+      completed: false,
+      simMinutes: 0
+    };
+
+    const raycaster = new THREE.Raycaster();
+    const pointer = new THREE.Vector2();
+    const dragPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+    const dragIntersect = new THREE.Vector3();
+
+    let activeDrag = null;
+    let lastPointerUpDragTime = 0;
+
+    // Feedback updates go strictly into the Top Dock Banner (outside 3D activity area!)
+    let bannerOverrideTimer = null;
+    function setTopStatus(knMsg, enMsg, badgeText = null, duration = 0) {
+      clearTimeout(bannerOverrideTimer);
+      document.getElementById('step-text-kn').textContent = knMsg;
+      document.getElementById('step-text-en').textContent = enMsg;
+      if (badgeText) document.getElementById('step-badge').textContent = badgeText;
+      if (duration > 0) {
+        bannerOverrideTimer = setTimeout(() => updateDashboardUI(), duration);
+      }
+    }
+
+    function updatePointer(e) {
+      const rect = renderer.domElement.getBoundingClientRect();
+      pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+    }
+
+    function syncBowlVisuals() {
+      updateWaterVolumeVisual(bowlWaterMesh, simState.bowlWaterMl / 100);
+    }
+
+    function syncSyringeVisuals() {
+      const frac = THREE.MathUtils.clamp(simState.syringeMl / 20, 0, 1);
+      plungerGroup.position.y = THREE.MathUtils.lerp(PLUNGER_MIN_Y, PLUNGER_MAX_Y, frac);
+      if (frac > 0.005) {
+        syringeWater.visible = true;
+        syringeWater.scale.y = frac * SYRINGE_MAX_WATER_H;
+      } else {
+        syringeWater.visible = false;
+      }
+      const isFull = simState.syringeMl >= 19.95;
+      syringeDigitalLabel.userData.updateLabel(
+        isFull ? '20 ml ಸಿದ್ಧ • Ready' : 'ಸಿರಿಂಜ್ • Syringe',
+        `${simState.syringeMl.toFixed(1)} ml`,
+        isFull ? '#34d399' : '#38bdf8'
+      );
+      thumbCap.material.color.setHex(isFull ? 0x34d399 : 0x38bdf8);
+      thumbCap.material.emissive.setHex(isFull ? 0x059669 : 0x0284c7);
+    }
+
+    function isSyringeOverBowl(pos) {
+      return Math.hypot(pos.x - BOWL_POS.x, pos.z - BOWL_POS.z) < 0.98;
+    }
+
+    function findContainerUnderSyringe(pos) {
+      let best = null;
+      let bestDist = 1.45;
+      Object.values(containers).forEach(c => {
+        if (!c.placed || c.waterMl >= 19.9) return;
+        const dist = Math.hypot(pos.x - c.group.position.x, pos.z - c.group.position.z);
+        const radiusThreshold = c.id === 'plate' ? 1.4 : 1.05;
+        if (dist < radiusThreshold && dist < bestDist) {
+          bestDist = dist;
+          best = c;
+        }
+      });
+      return best;
+    }
+
+    function findClosestSlot(pos, containerId) {
+      const slot = PLACEMENT_SLOTS[containerId];
+      if (pos.distanceTo(slot.pos) < 1.35) {
+        return { id: containerId, pos: slot.pos };
+      }
+      return null;
+    }
+
+    function dockSyringeToBowl() {
+      syringeGroup.position.copy(SYRINGE_BOWL_DIP_POS);
+      simState.syringeZone = 'bowl';
+      simState.targetContainerId = null;
+      setTopStatus(
+        'ಸಿರಿಂಜ್ ನೀರಿನ ಬಟ್ಟಲಿನಲ್ಲಿದೆ — ನೀಲಿ ಪ್ಲಂಜರ್ ಅನ್ನು ಮೇಲಕ್ಕೆ ಎಳೆದು 20 ml ತುಂಬಿಸಿ!',
+        'Syringe is in the Water Bowl — Pull the blue plunger UP to draw 20 ml!',
+        'ಹಂತ 2 • Pull'
+      );
+    }
+
+    function completeContainerFill(c) {
+      pourStream.visible = false;
+      simState.syringeMl = 0;
+      if (c.waterMl >= 18.0) c.waterMl = 20.0;
+      syncSyringeVisuals();
+      updateWaterVolumeVisual(c.waterMesh, c.waterMl / 20);
+      const baseTitle = c.id === 'bottle' ? 'A. ಬಾಟಲಿ • Bottle' : c.id === 'cup' ? 'B. ಲೋಟ • Cup' : 'C. ತಟ್ಟೆ • Plate';
+      c.label.userData.updateLabel(baseTitle, `${c.waterMl.toFixed(1)} ml`, c.waterMl >= 19.9 ? '#34d399' : '#38bdf8');
+
+      const allFilled = Object.values(containers).every(item => item.waterMl >= 19.9);
+      if (allFilled) {
+        syringeGroup.position.copy(SYRINGE_HOME_POS);
+        simState.syringeZone = 'stand';
+        simState.targetContainerId = null;
+      } else {
+        // Return smoothly to the Water Bowl ready to pull the next 20 ml!
+        syringeGroup.position.copy(SYRINGE_BOWL_DIP_POS);
+        simState.syringeZone = 'bowl';
+        simState.targetContainerId = null;
+      }
+      updateDashboardUI();
+    }
+
+    // Animated click-to-inject fallback (in addition to manual plunger push-down!)
+    function animateInjectIntoContainer(c) {
+      if (simState.injecting || simState.running || simState.completed) return;
+      if (!c.placed || c.waterMl >= 19.9 || simState.syringeMl < 1.0) return;
+
+      simState.injecting = true;
+      controls.enabled = true;
+      syringeGroup.position.set(c.group.position.x, c.pourY, c.group.position.z);
+
+      const startTime = performance.now();
+      const duration = 600;
+      const startSyringeMl = simState.syringeMl;
+      const startContainerMl = c.waterMl;
+      const targetAdd = Math.min(startSyringeMl, 20 - startContainerMl);
+
+      function stepInject(now) {
+        const p = Math.min(1, (now - startTime) / duration);
+        const ease = 1 - Math.pow(1 - p, 3);
+
+        simState.syringeMl = startSyringeMl * (1 - ease);
+        c.waterMl = startContainerMl + targetAdd * ease;
+        syncSyringeVisuals();
+        updateWaterVolumeVisual(c.waterMesh, c.waterMl / 20);
+
+        const baseTitle = c.id === 'bottle' ? 'A. ಬಾಟಲಿ • Bottle' : c.id === 'cup' ? 'B. ಲೋಟ • Cup' : 'C. ತಟ್ಟೆ • Plate';
+        c.label.userData.updateLabel(baseTitle, `${c.waterMl.toFixed(1)} ml`, '#38bdf8');
+
+        const streamTop = syringeGroup.position.y + 0.05;
+        const streamBot = c.group.position.y + c.waterBaseY + 0.08;
+        const streamH = Math.max(0.1, streamTop - streamBot);
+        pourStream.visible = p < 0.92;
+        pourStream.scale.y = streamH;
+        pourStream.position.set(c.group.position.x, streamBot + streamH / 2, c.group.position.z);
+
+        if (p < 1) {
+          requestAnimationFrame(stepInject);
+        } else {
+          simState.injecting = false;
+          completeContainerFill(c);
+        }
+      }
+      requestAnimationFrame(stepInject);
+    }
+
+    function getInteractiveMeshes() {
+      const list = [];
+      Object.values(containers).forEach(c => {
+        c.group.traverse(obj => {
+          if (obj.isMesh && obj.userData.dragTarget) list.push(obj);
+        });
+      });
+      list.push(plungerHit, barrelHit, bowlHit, watchHit);
+      return list;
+    }
+
+    renderer.domElement.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0 || simState.injecting || simState.completed) return;
+      updatePointer(e);
+      raycaster.setFromCamera(pointer, camera);
+
+      const hits = raycaster.intersectObjects(getInteractiveMeshes(), false);
+      if (hits.length === 0) return;
+
+      const hitObj = hits[0].object;
+
+      // 1) Clicked 3D Stopwatch
+      if (hitObj.userData.kind === 'stopwatch') {
+        handleStopwatchClick();
+        return;
+      }
+
+      if (simState.running) {
+        setTopStatus('ಪ್ರಯೋಗ ನಡೆಯುತ್ತಿದೆ! • Time-lapse is running.', 'Wait for completion or click Stopwatch to pause.', null, 2000);
+        return;
+      }
+
+      const allPlaced = Object.values(containers).every(c => c.placed);
+
+      // 2) Clicked Water Bowl -> Dock Syringe into Bowl to draw water
+      if (hitObj.userData.kind === 'water_bowl') {
+        if (!allPlaced) {
+          setTopStatus('ಮೊದಲು 3 ಪಾತ್ರೆಗಳನ್ನು ಮೇಜಿನ ಮೇಲೆ ಇರಿಸಿ!', 'Place Bottle, Cup, and Plate on the table first (Step 1).', null, 2400);
+          return;
+        }
+        dockSyringeToBowl();
+        return;
+      }
+
+      // 3) Clicked Syringe Plunger -> Pull UP (in Bowl) or Push DOWN (over Container)
+      if (hitObj.userData.kind === 'syringe_plunger') {
+        if (!allPlaced) {
+          setTopStatus('ಮೊದಲು 3 ಪಾತ್ರೆಗಳನ್ನು ಮೇಜಿನ ಮೇಲೆ ಇರಿಸಿ!', 'Place all 3 containers on the table first!', null, 2400);
+          return;
+        }
+        // If syringe is still on toolbox stand, dock it into the Water Bowl automatically!
+        if (simState.syringeZone === 'stand') {
+          dockSyringeToBowl();
+        }
+        // Check if syringe is over a container or over the bowl
+        if (isSyringeOverBowl(syringeGroup.position)) {
+          simState.syringeZone = 'bowl';
+        } else {
+          const under = findContainerUnderSyringe(syringeGroup.position);
+          if (under) {
+            simState.syringeZone = 'container';
+            simState.targetContainerId = under.id;
+          }
+        }
+
+        controls.enabled = false;
+        activeDrag = {
+          type: 'plunger',
+          startMouseX: e.clientX,
+          startMouseY: e.clientY,
+          startMl: simState.syringeMl,
+          startBowlMl: simState.bowlWaterMl,
+          startContainerMl: simState.targetContainerId ? containers[simState.targetContainerId].waterMl : 0,
+          moved: false
+        };
+        renderer.domElement.style.cursor = 'ns-resize';
+        return;
+      }
+
+      // 4) Clicked Syringe Barrel -> Drag syringe between Water Bowl & Containers
+      if (hitObj.userData.kind === 'syringe_barrel') {
+        if (!allPlaced) {
+          setTopStatus('ಮೊದಲು 3 ಪಾತ್ರೆಗಳನ್ನು ಮೇಜಿನ ಮೇಲೆ ಇರಿಸಿ!', 'Place all 3 containers on the table first!', null, 2400);
+          return;
+        }
+        controls.enabled = false;
+        const dragY = Math.max(syringeGroup.position.y, TABLE_TOP_Y + 1.85);
+        dragPlane.set(new THREE.Vector3(0, 1, 0), -dragY);
+        const offset = new THREE.Vector3();
+        if (raycaster.ray.intersectPlane(dragPlane, dragIntersect)) {
+          offset.copy(syringeGroup.position).sub(dragIntersect);
+        }
+        activeDrag = {
+          type: 'syringe',
+          startMouseX: e.clientX,
+          startMouseY: e.clientY,
+          offset,
+          dragY,
+          moved: false
+        };
+        renderer.domElement.style.cursor = 'grabbing';
+        return;
+      }
+
+      // 5) Clicked Container (Bottle, Cup, Plate)
+      if (hitObj.userData.dragTarget) {
+        const cGroup = hitObj.userData.dragTarget;
+        const c = containers[cGroup.userData.containerId];
+
+        // If syringe has water and user clicks a placed unfilled container -> position & pour!
+        if (c.placed && simState.syringeMl > 0.5 && c.waterMl < 19.9) {
+          animateInjectIntoContainer(c);
+          return;
+        }
+
+        if (c.waterMl > 0.1) {
+          setTopStatus('ನೀರು ತುಂಬಿದ ಪಾತ್ರೆಯನ್ನು ಸರಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ!', 'Cannot move a container after filling water.', null, 2000);
+          return;
+        }
+
+        controls.enabled = false;
+        const liftY = TABLE_TOP_Y + 0.35;
+        dragPlane.set(new THREE.Vector3(0, 1, 0), -liftY);
+        const offset = new THREE.Vector3();
+        if (raycaster.ray.intersectPlane(dragPlane, dragIntersect)) {
+          offset.copy(cGroup.position).sub(dragIntersect);
+        }
+        c.shadowDisc.visible = true;
+        c.group.position.y = liftY;
+        activeDrag = { type: 'container', container: c, offset };
+        renderer.domElement.style.cursor = 'grabbing';
+      }
+    });
+
+    window.addEventListener('pointermove', (e) => {
+      updatePointer(e);
+
+      if (!activeDrag) {
+        raycaster.setFromCamera(pointer, camera);
+        const hits = raycaster.intersectObjects(getInteractiveMeshes(), false);
+        renderer.domElement.style.cursor = hits.length > 0 ? 'pointer' : 'default';
+        return;
+      }
+
+      // --- PLUNGER PULL (IN BOWL) OR PUSH (OVER CONTAINER) ---
+      if (activeDrag.type === 'plunger') {
+        const dx = e.clientX - activeDrag.startMouseX;
+        const dy = e.clientY - activeDrag.startMouseY;
+        if (Math.hypot(dx, dy) > 4) activeDrag.moved = true;
+
+        const p0 = new THREE.Vector3(0, 0, 0).applyMatrix4(syringeGroup.matrixWorld).project(camera);
+        const p1 = new THREE.Vector3(0, 1, 0).applyMatrix4(syringeGroup.matrixWorld).project(camera);
+        const axisX = (p1.x - p0.x) * stageEl.clientWidth * 0.5;
+        const axisY = -(p1.y - p0.y) * stageEl.clientHeight * 0.5;
+        const len = Math.hypot(axisX, axisY) || 1;
+        const projPixels = (dx * axisX + dy * axisY) / len;
+
+        // 130 px vertical drag = 20 ml stroke
+        let newMl = THREE.MathUtils.clamp(activeDrag.startMl + (projPixels / 130) * 20, 0, 20);
+
+        if (simState.syringeZone === 'bowl') {
+          // PULL UP in Water Bowl -> fill syringe from bowl
+          if (newMl > 19.2) newMl = 20.0;
+          const deltaDrawn = newMl - activeDrag.startMl;
+          simState.syringeMl = newMl;
+          simState.bowlWaterMl = THREE.MathUtils.clamp(activeDrag.startBowlMl - deltaDrawn, 10, 100);
+          syncSyringeVisuals();
+          syncBowlVisuals();
+        } else if (simState.syringeZone === 'container' && simState.targetContainerId) {
+          // PUSH DOWN over Container -> pour water live into container!
+          const c = containers[simState.targetContainerId];
+          if (c.waterMl < 19.99 && activeDrag.startMl > 0.1) {
+            if (newMl < 0.8) newMl = 0; // Tactile snap to empty at bottom of push
+            const pushedOut = Math.max(0, activeDrag.startMl - newMl);
+            simState.syringeMl = newMl;
+            c.waterMl = THREE.MathUtils.clamp(activeDrag.startContainerMl + pushedOut, 0, 20);
+            syncSyringeVisuals();
+            updateWaterVolumeVisual(c.waterMesh, c.waterMl / 20);
+            const baseTitle = c.id === 'bottle' ? 'A. ಬಾಟಲಿ • Bottle' : c.id === 'cup' ? 'B. ಲೋಟ • Cup' : 'C. ತಟ್ಟೆ • Plate';
+            c.label.userData.updateLabel(baseTitle, `${c.waterMl.toFixed(1)} ml`, '#38bdf8');
+
+            // Live water stream while pushing plunger down
+            const streamTop = syringeGroup.position.y + 0.05;
+            const streamBot = c.group.position.y + c.waterBaseY + 0.08;
+            const streamH = Math.max(0.1, streamTop - streamBot);
+            pourStream.visible = pushedOut > 0.2 && newMl > 0;
+            pourStream.scale.y = streamH;
+            pourStream.position.set(c.group.position.x, streamBot + streamH / 2, c.group.position.z);
+          }
+        } else {
+          // Free air: remind user to dip in Water Bowl to draw water
+          if (newMl > activeDrag.startMl + 1.5) {
+            setTopStatus(
+              'ಮೊದಲು ಸಿರಿಂಜ್ ಅನ್ನು ನೀರಿನ ಬಟ್ಟಲಿನಲ್ಲಿ (Water Bowl) ಇರಿಸಿ ನೀರು ತೆಗೆಯಿರಿ!',
+              'Dip the syringe into the Water Bowl first to pull water!',
+              'ಹಂತ 2 • Bowl'
+            );
+          }
+        }
+        return;
+      }
+
+      // --- DRAGGING SYRINGE BARREL ---
+      if (activeDrag.type === 'syringe') {
+        const dx = e.clientX - activeDrag.startMouseX;
+        const dy = e.clientY - activeDrag.startMouseY;
+        if (Math.hypot(dx, dy) > 5) activeDrag.moved = true;
+
+        raycaster.setFromCamera(pointer, camera);
+        dragPlane.set(new THREE.Vector3(0, 1, 0), -activeDrag.dragY);
+        if (raycaster.ray.intersectPlane(dragPlane, dragIntersect)) {
+          const tx = THREE.MathUtils.clamp(dragIntersect.x + activeDrag.offset.x, -TABLE_W / 2 + 0.35, TABLE_W / 2 - 0.35);
+          const tz = THREE.MathUtils.clamp(dragIntersect.z + activeDrag.offset.z, -TABLE_D / 2 + 0.35, TABLE_D / 2 - 0.35);
+          syringeGroup.position.set(tx, activeDrag.dragY, tz);
+
+          if (isSyringeOverBowl(syringeGroup.position)) {
+            syringeGroup.position.copy(SYRINGE_BOWL_DIP_POS);
+            simState.syringeZone = 'bowl';
+            simState.targetContainerId = null;
+          } else {
+            const hovered = findContainerUnderSyringe(syringeGroup.position);
+            if (hovered) {
+              syringeGroup.position.set(hovered.group.position.x, hovered.pourY, hovered.group.position.z);
+              simState.syringeZone = 'container';
+              simState.targetContainerId = hovered.id;
+            } else {
+              simState.syringeZone = 'free';
+              simState.targetContainerId = null;
+            }
+          }
+        }
+        return;
+      }
+
+      // --- DRAGGING CONTAINER ---
+      if (activeDrag.type === 'container') {
+        const c = activeDrag.container;
+        raycaster.setFromCamera(pointer, camera);
+        dragPlane.set(new THREE.Vector3(0, 1, 0), -(TABLE_TOP_Y + 0.35));
+        if (raycaster.ray.intersectPlane(dragPlane, dragIntersect)) {
+          const margin = c.id === 'plate' ? 1.15 : 0.65;
+          const tx = THREE.MathUtils.clamp(dragIntersect.x + activeDrag.offset.x, -TABLE_W / 2 + margin, TABLE_W / 2 - margin);
+          const tz = THREE.MathUtils.clamp(dragIntersect.z + activeDrag.offset.z, -TABLE_D / 2 + margin, TABLE_D / 2 - margin);
+          c.group.position.set(tx, TABLE_TOP_Y + 0.35, tz);
+        }
+      }
+    });
+
+    window.addEventListener('pointerup', () => {
+      if (!activeDrag) return;
+      pourStream.visible = false;
+
+      if (activeDrag.type === 'plunger') {
+        if (simState.syringeZone === 'bowl') {
+          if (simState.syringeMl >= 17.5) {
+            simState.syringeMl = 20.0;
+            syncSyringeVisuals();
+            setTopStatus(
+              '20 ml ನೀರು ಸಿರಿಂಜ್‌ನಲ್ಲಿದೆ! ಈಗ ಸಿರಿಂಜ್ ಅನ್ನು ಬಾಟಲಿ, ಲೋಟ ಅಥವಾ ತಟ್ಟೆಯ ಮೇಲೆ ಎಳೆದು ಇಡಿ.',
+              '20 ml filled! Now drag the Syringe over Bottle, Cup, or Plate and push plunger down (or click).',
+              'ಹಂತ 2 • Carry'
+            );
+          }
+        } else if (simState.syringeZone === 'container' && simState.targetContainerId) {
+          const c = containers[simState.targetContainerId];
+          if (!activeDrag.moved && simState.syringeMl > 0.5 && c.waterMl < 19.9) {
+            // Quick click on plunger over container also injects smoothly!
+            animateInjectIntoContainer(c);
+          } else if (c.waterMl >= 19.4 || simState.syringeMl <= 0.6) {
+            completeContainerFill(c);
+          }
+        }
+      } else if (activeDrag.type === 'syringe') {
+        if (!activeDrag.moved) {
+          if (simState.syringeZone === 'stand') {
+            dockSyringeToBowl();
+          } else if (simState.syringeZone === 'container' && simState.targetContainerId) {
+            const c = containers[simState.targetContainerId];
+            if (simState.syringeMl > 0.5 && c.waterMl < 19.9) {
+              animateInjectIntoContainer(c);
+            }
+          }
+        } else {
+          // Finished dragging syringe
+          if (simState.syringeZone === 'bowl') {
+            dockSyringeToBowl();
+          } else if (simState.syringeZone === 'container' && simState.targetContainerId) {
+            const c = containers[simState.targetContainerId];
+            if (simState.syringeMl > 0.5 && c.waterMl < 19.9) {
+              setTopStatus(
+                `${c.nameKn} ಮೇಲಿದೆ — ಪ್ಲಂಜರ್ ಅನ್ನು ಕೆಳಕ್ಕೆ ಒತ್ತಿ (Push Down) ಅಥವಾ ಕ್ಲಿಕ್ ಮಾಡಿ 20 ml ಹಾಕಿ!`,
+                `Over ${c.nameEn} — Push the plunger DOWN (or click) to drop water in!`,
+                'ಹಂತ 2 • Push'
+              );
+            }
+          }
+        }
+      } else if (activeDrag.type === 'container') {
+        const c = activeDrag.container;
+        c.shadowDisc.visible = false;
+        const slotMatch = findClosestSlot(new THREE.Vector3(c.group.position.x, TABLE_TOP_Y, c.group.position.z), c.id);
+        if (slotMatch) {
+          c.group.position.set(slotMatch.pos.x, TABLE_TOP_Y, slotMatch.pos.z);
+          c.placed = true;
+        } else if (c.group.position.x > -1.35) {
+          c.group.position.y = TABLE_TOP_Y;
+          c.placed = true;
+        } else {
+          c.group.position.copy(c.homePos);
+          c.placed = false;
+        }
+
+        const placedCount = Object.values(containers).filter(x => x.placed).length;
+        if (placedCount === 3 && simState.syringeZone === 'stand') {
+          dockSyringeToBowl();
+        }
+      }
+
+      lastPointerUpDragTime = performance.now();
+      activeDrag = null;
+      controls.enabled = true;
+      renderer.domElement.style.cursor = 'default';
+      updateDashboardUI();
+    });
+
+    function handleStopwatchClick() {
+      if (simState.completed) {
+        setTopStatus('ಪ್ರಯೋಗ ಮುಗಿದಿದೆ! ಹೊಸದಾಗಿ ಪ್ರಾರಂಭಿಸಲು Reset ಒತ್ತಿರಿ.', 'Experiment complete! Click Reset Lab to run again.', null, 2500);
+        return;
+      }
+      const allPlaced = Object.values(containers).every(c => c.placed);
+      const allFilled = Object.values(containers).every(c => c.waterMl >= 19.9);
+      if (!allPlaced) {
+        setTopStatus('ಮೊದಲು 3 ಪಾತ್ರೆಗಳನ್ನು ಮೇಜಿನ ಮೇಲೆ ಇರಿಸಿ!', 'Place all 3 containers on the table first.', null, 2500);
+        return;
+      }
+      if (!allFilled) {
+        setTopStatus('ಪ್ರತಿ ಪಾತ್ರೆಗೆ 20 ml ನೀರು ಹಾಕಿದ ನಂತರ ಸ್ಟಾಪ್‌ವಾಚ್ ಕ್ಲಿಕ್ ಮಾಡಿ!', 'Fill all 3 containers with 20 ml before starting the Stopwatch!', null, 2500);
+        return;
+      }
+
+      crownButton.position.y = 0.43;
+      setTimeout(() => { crownButton.position.y = 0.49; }, 180);
+
+      simState.running = !simState.running;
+      drawStopwatchFace(simState.simMinutes, simState.running);
+      watchLabel.userData.updateLabel(
+        'ಸ್ಟಾಪ್‌ವಾಚ್ • Stopwatch',
+        simState.running ? 'ನಡೆಯುತ್ತಿದೆ... • Running' : 'ವಿರಾಮ • Paused',
+        simState.running ? '#34d399' : '#fbbf24'
+      );
+      updateDashboardUI();
+    }
+
+    // =========================================================================
+    // 11. SUN INTENSITY SLIDER & ATMOSPHERE UPDATE
+    // =========================================================================
+    const sunSlider = document.getElementById('sun-slider');
+    const sunValueBadge = document.getElementById('sun-value-badge');
+
+    function applySunIntensity(val) {
+      simState.sunIntensity = Number(val);
+      sunValueBadge.textContent = `${val}%`;
+      const n = simState.sunIntensity / 100;
+
+      sunLight.intensity = 0.45 + n * 3.15;
+      sunLight.color.setHSL(0.11, 0.25 + n * 0.55, 0.92);
+      hemiLight.intensity = 0.38 + n * 0.52;
+      renderer.toneMappingExposure = 0.8 + n * 0.42;
+
+      skyUniforms.sunIntensity.value = n;
+      skyUniforms.topColor.value.setHSL(0.56, 0.65 - (1 - n) * 0.35, 0.28 + n * 0.26);
+      skyUniforms.bottomColor.value.setHSL(0.54, 0.35 + n * 0.25, 0.55 + n * 0.35);
+
+      sunOrb.scale.setScalar(0.65 + n * 0.65);
+      sunOrb.material.color.setHSL(0.13, 0.5 + n * 0.4, 0.72 + n * 0.25);
+    }
+
+    sunSlider.addEventListener('input', (e) => applySunIntensity(e.target.value));
+    applySunIntensity(75);
+
+    // =========================================================================
+    // 12. HUD DASHBOARD & LIVE CANVAS BAR GRAPH
+    // =========================================================================
+    const chartCanvas = document.getElementById('evap-chart');
+    const chartCtx = chartCanvas.getContext('2d');
+
+    function drawBarGraph() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const w = chartCanvas.clientWidth || 270;
+      const h = chartCanvas.clientHeight || 148;
+      if (chartCanvas.width !== w * dpr || chartCanvas.height !== h * dpr) {
+        chartCanvas.width = w * dpr;
+        chartCanvas.height = h * dpr;
+      }
+      const ctx = chartCtx;
+      ctx.save();
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, w, h);
+
+      const padL = 30, padR = 10, padT = 18, padB = 30;
+      const plotW = w - padL - padR;
+      const plotH = h - padT - padB;
+
+      ctx.font = '600 10px "Plus Jakarta Sans", sans-serif';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      for (let ml = 0; ml <= 20; ml += 5) {
+        const y = padT + plotH - (ml / 20) * plotH;
+        ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w - padR, y); ctx.stroke();
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillText(`${ml}`, padL - 5, y);
+      }
+
+      const items = [
+        { key: 'bottle', label: 'ಬಾಟಲಿ/Bottle', color1: '#0284c7', color2: '#38bdf8' },
+        { key: 'cup',    label: 'ಲೋಟ/Cup',      color1: '#7c3aed', color2: '#a78bfa' },
+        { key: 'plate',  label: 'ತಟ್ಟೆ/Plate',  color1: '#e11d48', color2: '#fb7185' }
+      ];
+
+      const barW = Math.min(44, plotW / 4.5);
+      const gap = (plotW - barW * 3) / 4;
+
+      items.forEach((item, idx) => {
+        const ml = containers[item.key].waterMl;
+        const barH = Math.max(0, (ml / 20) * plotH);
+        const x = padL + gap + idx * (barW + gap);
+        const y = padT + plotH - barH;
+
+        ctx.fillStyle = 'rgba(255,255,255,0.06)';
+        ctx.beginPath(); ctx.roundRect(x, padT, barW, plotH, 5); ctx.fill();
+
+        if (barH > 1) {
+          const grad = ctx.createLinearGradient(x, y, x, padT + plotH);
+          grad.addColorStop(0, item.color2);
+          grad.addColorStop(1, item.color1);
+          ctx.fillStyle = grad;
+          ctx.beginPath(); ctx.roundRect(x, y, barW, barH, 5); ctx.fill();
+        }
+
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = 'bold 10px "Plus Jakarta Sans", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(`${ml.toFixed(1)}ml`, x + barW / 2, Math.max(9, y - 8));
+
+        ctx.fillStyle = '#cbd5e1';
+        ctx.font = '600 9.5px "Plus Jakarta Sans", "Noto Sans Kannada", sans-serif';
+        ctx.fillText(item.label, x + barW / 2, padT + plotH + 14);
+      });
+
+      ctx.restore();
+    }
+
+    function updateDashboardUI() {
+      const placedCount = Object.values(containers).filter(c => c.placed).length;
+      const readyCount = Object.values(containers).filter(c => c.waterMl >= 19.9 || simState.running || simState.completed).length;
+
+      const hrs = Math.floor(simState.simMinutes / 60);
+      const mins = Math.floor(simState.simMinutes % 60);
+      document.getElementById('sim-time-display').textContent =
+        `${hrs} ${hrs === 1 ? 'Hour' : 'Hours'} ${mins} ${mins === 1 ? 'Min' : 'Mins'}`;
+      document.getElementById('sim-time-kn').textContent = `${hrs} ಗಂಟೆ ${mins} ನಿಮಿಷ`;
+
+      ['bottle', 'cup', 'plate'].forEach(key => {
+        const c = containers[key];
+        const rem = Math.max(0, c.waterMl);
+        const evap = c.placed && readyCount === 3 ? Math.max(0, 20 - rem) : 0;
+        document.getElementById(`val-${key}`).textContent = `${rem.toFixed(1)} ml`;
+        document.getElementById(`evap-${key}`).textContent = `ಆವಿಯಾದದ್ದು (Evap): ${evap.toFixed(1)} ml`;
+      });
+
+      const pillPlace = document.getElementById('pill-place');
+      const pillFill = document.getElementById('pill-fill');
+      const pillWatch = document.getElementById('pill-watch');
+      const stepBadge = document.getElementById('step-badge');
+      const stepKn = document.getElementById('step-text-kn');
+      const stepEn = document.getElementById('step-text-en');
+      const statusTag = document.getElementById('sim-status-tag');
+
+      pillPlace.innerHTML = `1. ಪಾತ್ರೆ<br/>Place (${placedCount}/3)`;
+      pillFill.innerHTML = `2. 20ml ನೀರು<br/>Fill (${readyCount}/3)`;
+      pillWatch.innerHTML = simState.completed ? `3. ಪೂರ್ಣ<br/>Done` : (simState.running ? `3. ಚಾಲನೆ<br/>Running` : `3. ಸ್ಟಾಪ್‌ವಾಚ್<br/>Start`);
+
+      pillPlace.className = 'status-pill ' + (placedCount === 3 ? 'done' : 'active');
+      pillFill.className = 'status-pill ' + (readyCount === 3 ? 'done' : (placedCount === 3 ? 'active' : ''));
+      pillWatch.className = 'status-pill ' + (simState.completed ? 'done' : (simState.running || readyCount === 3 ? 'active' : ''));
+
+      if (simState.completed) {
+        stepBadge.textContent = 'ಪೂರ್ಣ • Done';
+        stepKn.textContent = 'ಪ್ರಯೋಗ ಪೂರ್ಣಗೊಂಡಿದೆ! ಹೆಚ್ಚು ಮೇಲ್ಮೈ ವಿಸ್ತೀರ್ಣ = ವೇಗವಾದ ಆವಿಯಾಗುವಿಕೆ.';
+        stepEn.textContent = 'Experiment complete! Wide Plate evaporated fastest due to larger surface area.';
+        statusTag.textContent = 'ಪೂರ್ಣ • Complete';
+        statusTag.style.color = '#34d399';
+      } else if (simState.running) {
+        stepBadge.textContent = 'ಚಾಲನೆಯಲ್ಲಿ • Live';
+        stepKn.textContent = 'ಸಮಯ-ವೇಗ ಚಾಲನೆಯಲ್ಲಿದೆ! ಸೂರ್ಯನ ತೀವ್ರತೆ ಬದಲಾಯಿಸಿ ಆವಿಯಾಗುವಿಕೆಯನ್ನು ನೋಡಿ.';
+        stepEn.textContent = 'Time-lapse running! Adjust Sun Intensity slider and watch vapor rise from the Plate.';
+        statusTag.textContent = 'ನಡೆಯುತ್ತಿದೆ • Running';
+        statusTag.style.color = '#38bdf8';
+      } else if (placedCount < 3) {
+        stepBadge.textContent = 'ಹಂತ 1 / Step 1';
+        stepKn.textContent = 'ಟೂಲ್‌ಬಾಕ್ಸ್‌ನಿಂದ ಬಾಟಲಿ, ಲೋಟ ಮತ್ತು ತಟ್ಟೆಯನ್ನು ಮೇಜಿನ ಮೇಲೆ ಎಳೆದು ಇರಿಸಿ.';
+        stepEn.textContent = 'Drag Bottle, Cup, and Plate from the Toolbox onto the 3 pads on the table.';
+      } else if (readyCount < 3) {
+        stepBadge.textContent = 'ಹಂತ 2 / Step 2';
+        if (simState.syringeMl >= 19.95) {
+          stepKn.textContent = '20 ml ಸಿದ್ಧ! ಸಿರಿಂಜ್ ಅನ್ನು ಪಾತ್ರೆಯ ಮೇಲೆ ಎಳೆದು ಪ್ಲಂಜರ್ ಕೆಳಕ್ಕೆ ಒತ್ತಿ (ಅಥವಾ ಕ್ಲಿಕ್ ಮಾಡಿ).';
+          stepEn.textContent = '20 ml ready! Drag Syringe over Bottle/Cup/Plate & push plunger down (or click).';
+        } else {
+          stepKn.textContent = 'ನೀರಿನ ಬಟ್ಟಲಿನಲ್ಲಿ ಸಿರಿಂಜ್ ಪ್ಲಂಜರ್ ಅನ್ನು ಮೇಲಕ್ಕೆ ಎಳೆದು 20 ml ನೀರು ತೆಗೆಯಿರಿ.';
+          stepEn.textContent = 'Pull the Syringe plunger UP in the Water Bowl to draw 20 ml of blue water.';
+        }
+      } else {
+        stepBadge.textContent = 'ಹಂತ 3 / Step 3';
+        stepKn.textContent = 'ಸಮಯ-ವೇಗ ಪ್ರಾರಂಭಿಸಲು ಮೇಜಿನ ಮೇಲಿರುವ 3D ಸ್ಟಾಪ್‌ವಾಚ್ ಅನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ!';
+        stepEn.textContent = 'Click the 3D Stopwatch on the table to start the evaporation time-lapse!';
+      }
+
+      drawBarGraph();
+    }
+
+    // =========================================================================
+    // 13. CONFETTI & RESULT MODAL
+    // =========================================================================
+    const confettiCanvas = document.getElementById('confetti-canvas');
+    const confettiCtx = confettiCanvas.getContext('2d');
+    let confettiPieces = [];
+    let confettiAnimId = null;
+
+    function launchConfetti() {
+      confettiCanvas.width = window.innerWidth;
+      confettiCanvas.height = window.innerHeight;
+      confettiPieces = [];
+      const colors = ['#38bdf8', '#fbbf24', '#34d399', '#fb7185', '#a78bfa', '#f8fafc'];
+      for (let i = 0; i < 160; i++) {
+        confettiPieces.push({
+          x: Math.random() * confettiCanvas.width,
+          y: -20 - Math.random() * confettiCanvas.height * 0.6,
+          w: 7 + Math.random() * 8, h: 5 + Math.random() * 6,
+          vx: (Math.random() - 0.5) * 4, vy: 2.5 + Math.random() * 4.2,
+          rot: Math.random() * Math.PI * 2, vRot: (Math.random() - 0.5) * 0.2,
+          color: colors[i % colors.length]
+        });
+      }
+
+      function tickConfetti() {
+        confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+        let active = 0;
+        confettiPieces.forEach(p => {
+          p.x += p.vx; p.y += p.vy; p.rot += p.vRot;
+          if (p.y < confettiCanvas.height + 30) active++;
+          confettiCtx.save();
+          confettiCtx.translate(p.x, p.y);
+          confettiCtx.rotate(p.rot);
+          confettiCtx.fillStyle = p.color;
+          confettiCtx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          confettiCtx.restore();
+        });
+        if (active > 0 && simState.completed) {
+          confettiAnimId = requestAnimationFrame(tickConfetti);
+        } else {
+          confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+        }
+      }
+      cancelAnimationFrame(confettiAnimId);
+      tickConfetti();
+    }
+
+    function finishExperiment() {
+      simState.running = false;
+      simState.completed = true;
+      drawStopwatchFace(simState.simMinutes, false);
+      watchLabel.userData.updateLabel('ಸ್ಟಾಪ್‌ವಾಚ್ • Stopwatch', 'ಪೂರ್ಣಗೊಂಡಿದೆ • Complete', '#34d399');
+
+      const evapPlate = Math.max(0, 20 - containers.plate.waterMl).toFixed(1);
+      const evapCup = Math.max(0, 20 - containers.cup.waterMl).toFixed(1);
+      const evapBottle = Math.max(0, 20 - containers.bottle.waterMl).toFixed(1);
+
+      document.getElementById('res-plate-val').textContent = `${evapPlate} ml`;
+      document.getElementById('res-cup-val').textContent = `${evapCup} ml`;
+      document.getElementById('res-bottle-val').textContent = `${evapBottle} ml`;
+
+      document.getElementById('result-conclusion-text').innerHTML =
+        `Experiment Complete! Plate (Wide) evaporated <strong>${evapPlate}ml</strong>, Cup <strong>${evapCup}ml</strong>, Bottle (Narrow) <strong>${evapBottle}ml</strong>.<br/><br/>` +
+        `<strong style="color:#fde047;">Conclusion: More surface area = Faster evaporation<br/>(ಹೆಚ್ಚು ಮೇಲ್ಮೈ ವಿಸ್ತೀರ್ಣ = ವೇಗವಾದ ಆವಿಯಾಗುವಿಕೆ).</strong>`;
+
+      document.getElementById('result-overlay').classList.add('open');
+      launchConfetti();
+      updateDashboardUI();
+    }
+
+    // =========================================================================
+    // 14. RESET HANDLERS
+    // =========================================================================
+    function resetExperiment() {
+      simState.running = false;
+      simState.completed = false;
+      simState.simMinutes = 0;
+      simState.bowlWaterMl = 100.0;
+      simState.syringeMl = 0;
+      simState.syringeZone = 'stand';
+      simState.targetContainerId = null;
+      simState.injecting = false;
+      pourStream.visible = false;
+
+      vaporParticles.forEach(p => {
+        vaporGroup.remove(p.sprite);
+        p.sprite.material.dispose();
+      });
+      vaporParticles.length = 0;
+
+      Object.values(containers).forEach(c => {
+        c.placed = false;
+        c.waterMl = 0;
+        c.group.position.copy(c.homePos);
+        c.shadowDisc.visible = false;
+        updateWaterVolumeVisual(c.waterMesh, 0);
+        const baseTitle = c.id === 'bottle' ? 'A. ಬಾಟಲಿ • Bottle' : c.id === 'cup' ? 'B. ಲೋಟ • Cup' : 'C. ತಟ್ಟೆ • Plate';
+        c.label.userData.updateLabel(baseTitle, '0.0 ml');
+      });
+
+      syncBowlVisuals();
+      syringeGroup.position.copy(SYRINGE_HOME_POS);
+      syncSyringeVisuals();
+      drawStopwatchFace(0, false);
+      watchLabel.userData.updateLabel('ಸ್ಟಾಪ್‌ವಾಚ್ • Stopwatch', 'ಪ್ರಾರಂಭಿಸಲು ಕ್ಲಿಕ್ ಮಾಡಿ', '#fbbf24');
+
+      document.getElementById('result-overlay').classList.remove('open');
+      cancelAnimationFrame(confettiAnimId);
+      confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+
+      updateDashboardUI();
+    }
+
+    document.getElementById('btn-reset-sim').addEventListener('click', resetExperiment);
+    document.getElementById('btn-play-again').addEventListener('click', resetExperiment);
+    document.getElementById('btn-reset-cam').addEventListener('click', () => {
+      camera.position.copy(DEFAULT_CAM_POS);
+      controls.target.copy(DEFAULT_CAM_TARGET);
+      controls.update();
+    });
+
+    // =========================================================================
+    // 15. MAIN ANIMATION & EVAPORATION PHYSICS LOOP
+    // =========================================================================
+    let lastTime = performance.now();
+    let vaporAccumulator = { bottle: 0, cup: 0, plate: 0 };
+    let uiSyncTimer = 0;
+
+    function animate(now) {
+      requestAnimationFrame(animate);
+      const dt = Math.min(0.05, (now - lastTime) / 1000);
+      lastTime = now;
+
+      // Pulse placement rings & water bowl ring subtly
+      Object.entries(slotRings).forEach(([key, ring]) => {
+        ring.material.opacity = !containers[key].placed
+          ? 0.45 + 0.35 * Math.sin(now * 0.005)
+          : 0.25;
+      });
+      const allPlaced = Object.values(containers).every(c => c.placed);
+      const allFilled = Object.values(containers).every(c => c.waterMl >= 19.9);
+      bowlGlowRing.material.opacity = (allPlaced && !allFilled && simState.syringeMl < 19.95)
+        ? 0.4 + 0.4 * Math.sin(now * 0.006)
+        : 0.15;
+
+      if (simState.running && !simState.completed) {
+        const simMinsDelta = dt * 12.0;
+        simState.simMinutes = Math.min(180, simState.simMinutes + simMinsDelta);
+
+        const sunNorm = simState.sunIntensity / 100;
+        const sunFactor = 0.12 + 1.23 * Math.pow(sunNorm, 1.15);
+        const basePlateMlPerSimMin = 0.135;
+
+        ['bottle', 'cup', 'plate'].forEach(key => {
+          const c = containers[key];
+          if (c.waterMl <= 0) return;
+
+          const evapMl = basePlateMlPerSimMin * c.evapRateCoeff * sunFactor * simMinsDelta;
+          c.waterMl = Math.max(0, c.waterMl - evapMl);
+          updateWaterVolumeVisual(c.waterMesh, c.waterMl / 20);
+
+          const baseTitle = key === 'bottle' ? 'A. ಬಾಟಲಿ • Bottle' : key === 'cup' ? 'B. ಲೋಟ • Cup' : 'C. ತಟ್ಟೆ • Plate';
+          c.label.userData.updateLabel(baseTitle, `${c.waterMl.toFixed(1)} ml`);
+
+          const rateFactor = c.evapRateCoeff * (0.3 + sunNorm * 0.9);
+          const emitFreq = key === 'plate' ? 28 : (key === 'cup' ? 11 : 3.2);
+          vaporAccumulator[key] += dt * emitFreq * (0.35 + sunNorm * 0.85);
+          while (vaporAccumulator[key] >= 1) {
+            vaporAccumulator[key] -= 1;
+            spawnVaporParticle(c, rateFactor);
+          }
+        });
+
+        uiSyncTimer += dt;
+        if (uiSyncTimer >= 0.08) {
+          uiSyncTimer = 0;
+          drawStopwatchFace(simState.simMinutes, true);
+          updateDashboardUI();
+        }
+
+        if (simState.simMinutes >= 180 || containers.plate.waterMl <= 0.005) {
+          if (containers.plate.waterMl <= 0.005) containers.plate.waterMl = 0;
+          updateWaterVolumeVisual(containers.plate.waterMesh, 0);
+          finishExperiment();
+        }
+      }
+
+      updateVaporParticles(dt);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    function handleResize() {
+      const sz = getStageSize();
+      camera.aspect = sz.w / sz.h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(sz.w, sz.h);
+      drawBarGraph();
+    }
+    window.addEventListener('resize', handleResize);
+
+    syncBowlVisuals();
+    syncSyringeVisuals();
+    updateDashboardUI();
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>
+             
