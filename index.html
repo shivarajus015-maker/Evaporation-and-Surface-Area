@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>ಆವಿಯಾಗುವಿಕೆ ಮತ್ತು ಮೇಲ್ಮೈ ವಿಸ್ತೀರ್ಣ - Evaporation & Surface Area 3D Lab</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -28,6 +28,7 @@
       margin: 0;
       padding: 0;
       user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
     html, body {
@@ -48,6 +49,8 @@
       bottom: 0;
       z-index: 1;
       overflow: hidden;
+      transition: all 0.25s ease;
+      touch-action: none;
     }
 
     #stage-area canvas {
@@ -63,23 +66,24 @@
       left: 0;
       right: 0;
       height: var(--top-h);
-      z-index: 10;
+      z-index: 15;
       background: linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.88));
       border-bottom: 1px solid var(--glass-border);
-      padding: 8px 14px;
+      padding: 8px 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 10px;
+      transition: background 0.25s ease, border-color 0.25s ease;
     }
 
     #title-card {
-      min-width: 245px;
-      max-width: 310px;
+      min-width: 215px;
+      max-width: 275px;
     }
 
     #title-card h1 {
-      font-size: 0.92rem;
+      font-size: 0.88rem;
       font-weight: 800;
       letter-spacing: -0.01em;
       background: linear-gradient(135deg, #7dd3fc, #fde68a);
@@ -89,7 +93,7 @@
     }
 
     #title-card p {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       color: var(--text-secondary);
       margin-top: 2px;
     }
@@ -124,7 +128,7 @@
     }
 
     #step-text-kn {
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       font-weight: 700;
       color: #fde68a;
       white-space: nowrap;
@@ -133,7 +137,7 @@
     }
 
     #step-text-en {
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       color: var(--text-primary);
       white-space: nowrap;
       overflow: hidden;
@@ -142,18 +146,57 @@
 
     #action-buttons {
       display: flex;
-      gap: 8px;
+      align-items: center;
+      gap: 6px;
       flex-shrink: 0;
     }
 
+    /* Desktop / Mobile Mode Segmented Switch */
+    .mode-switch {
+      display: flex;
+      background: rgba(2, 6, 23, 0.65);
+      border: 1px solid var(--glass-border);
+      border-radius: 10px;
+      padding: 3px;
+      gap: 3px;
+    }
+
+    .mode-btn {
+      padding: 5px 9px;
+      border-radius: 7px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 0.7rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 1.15;
+    }
+
+    .mode-btn span.kn {
+      font-size: 0.62rem;
+      font-weight: 600;
+    }
+
+    .mode-btn.active {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      color: #ffffff;
+      box-shadow: 0 2px 10px rgba(37, 99, 235, 0.45);
+    }
+
     .btn-glass {
-      padding: 6px 11px;
+      padding: 6px 10px;
       border-radius: 10px;
       border: 1px solid var(--glass-border);
-      background: rgba(30, 41, 59, 0.75);
+      background: rgba(30, 41, 59, 0.8);
       color: var(--text-primary);
       font-family: inherit;
-      font-size: 0.72rem;
+      font-size: 0.71rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
@@ -161,19 +204,30 @@
       flex-direction: column;
       align-items: center;
       line-height: 1.2;
+      white-space: nowrap;
     }
 
     .btn-glass:hover {
-      background: rgba(51, 65, 85, 0.92);
+      background: rgba(51, 65, 85, 0.95);
       border-color: var(--accent-cyan);
     }
 
     .btn-glass span.kn {
-      font-size: 0.66rem;
+      font-size: 0.64rem;
       color: #bae6fd;
     }
 
-    /* Right Docked HUD Dashboard (Outside 3D Activity Area) */
+    .btn-hide-accent {
+      border-color: rgba(251, 191, 36, 0.45);
+      background: rgba(120, 53, 15, 0.35);
+    }
+
+    .btn-hide-accent:hover {
+      border-color: #fbbf24;
+      background: rgba(146, 64, 14, 0.55);
+    }
+
+    /* Right Docked HUD Dashboard (Desktop Mode) */
     #hud-dashboard {
       position: fixed;
       top: var(--top-h);
@@ -190,6 +244,7 @@
       flex-direction: column;
       gap: 9px;
       overflow-y: auto;
+      transition: all 0.25s ease;
     }
 
     .hud-section-title {
@@ -306,8 +361,8 @@
 
     input[type="range"]#sun-slider::-webkit-slider-thumb {
       appearance: none;
-      width: 16px;
-      height: 16px;
+      width: 18px;
+      height: 18px;
       border-radius: 50%;
       background: #fff;
       border: 3px solid #f59e0b;
@@ -382,6 +437,165 @@
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 9px;
       padding: 7px 9px;
+    }
+
+    /* =========================================================================
+       MOBILE MODE LAYOUT (EASY TOUCH OPERATION ON PHONES & TABLETS)
+       ========================================================================= */
+    body.mobile-mode {
+      --top-h: 58px;
+    }
+
+    body.mobile-mode #title-card {
+      display: none;
+    }
+
+    body.mobile-mode #stage-area {
+      top: var(--top-h);
+      left: 0;
+      right: 0;
+      bottom: 36vh;
+    }
+
+    body.mobile-mode #hud-dashboard {
+      top: auto;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: 36vh;
+      border-left: none;
+      border-top: 1px solid var(--glass-border);
+      padding: 10px 12px 16px;
+      gap: 8px;
+    }
+
+    body.mobile-mode .btn-glass {
+      padding: 6px 8px;
+      font-size: 0.68rem;
+    }
+
+    body.mobile-mode .mode-btn {
+      padding: 5px 7px;
+      font-size: 0.66rem;
+    }
+
+    body.mobile-mode #step-banner {
+      padding: 5px 9px;
+      gap: 7px;
+    }
+
+    body.mobile-mode .step-badge {
+      font-size: 0.66rem;
+      padding: 4px 8px;
+    }
+
+    body.mobile-mode #step-text-kn {
+      font-size: 0.72rem;
+    }
+
+    body.mobile-mode #step-text-en {
+      font-size: 0.65rem;
+    }
+
+    /* =========================================================================
+       HIDE ALL TEXT MODE + FLOATING NEXT / PREVIOUS / BACK CONTROL BAR
+       ========================================================================= */
+    body.hide-all-text #stage-area {
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+    }
+
+    body.hide-all-text #hud-dashboard,
+    body.hide-all-text #title-card,
+    body.hide-all-text #step-banner {
+      display: none !important;
+    }
+
+    body.hide-all-text #top-dock {
+      background: transparent;
+      border-bottom: none;
+      pointer-events: none;
+      justify-content: flex-end;
+    }
+
+    body.hide-all-text #action-buttons {
+      pointer-events: auto;
+      background: rgba(15, 23, 42, 0.78);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 5px 8px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    /* Floating Step & Back Controller shown when all text is hidden */
+    #hidden-text-controls {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 30;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      background: rgba(15, 23, 42, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
+      padding: 8px 14px;
+      border-radius: 999px;
+    }
+
+    body.hide-all-text #hidden-text-controls {
+      display: flex;
+      animation: popUp 0.28s ease;
+    }
+
+    .nav-pill-btn {
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(30, 41, 59, 0.9);
+      color: #f8fafc;
+      font-family: inherit;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 8px 15px;
+      border-radius: 999px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .nav-pill-btn:hover {
+      background: rgba(51, 65, 85, 1);
+      border-color: #38bdf8;
+      transform: translateY(-1px);
+    }
+
+    .nav-pill-btn.primary {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      border-color: rgba(125, 211, 252, 0.6);
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.45);
+    }
+
+    .nav-pill-btn.back-show {
+      background: linear-gradient(135deg, #d97706, #f59e0b);
+      color: #0f172a;
+      border-color: #fde68a;
+    }
+
+    .nav-step-indicator {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #38bdf8;
+      padding: 0 6px;
+      white-space: nowrap;
     }
 
     /* Confetti Canvas & Result Pop-Up Modal */
@@ -483,9 +697,12 @@
       to { opacity: 1; transform: scale(1) translateY(0); }
     }
 
-    @media (max-width: 980px) {
-      :root { --side-w: 270px; }
+    @media (max-width: 1120px) {
       #title-card { display: none; }
+    }
+
+    @media (max-width: 900px) {
+      :root { --side-w: 265px; }
     }
   </style>
 
@@ -503,7 +720,7 @@
   <!-- Dedicated Unobstructed 3D Canvas Stage -->
   <div id="stage-area"></div>
 
-  <!-- Top Docked Header & Instruction Strip (Zero overlap with 3D table) -->
+  <!-- Top Docked Header & Instruction Strip -->
   <header id="top-dock">
     <div id="title-card">
       <h1>ಆವಿಯಾಗುವಿಕೆ ಮತ್ತು ಮೇಲ್ಮೈ ವಿಸ್ತೀರ್ಣ • Evaporation Lab</h1>
@@ -519,18 +736,51 @@
     </div>
 
     <div id="action-buttons">
-      <button class="btn-glass" id="btn-reset-cam" title="Reset Camera">
-        <span>🎥 ಕ್ಯಾಮೆರಾ</span>
-        <span class="kn">Reset View</span>
+      <!-- Desktop / Mobile Mode Switcher -->
+      <div class="mode-switch" role="group" aria-label="Device Mode">
+        <button class="mode-btn active" id="btn-mode-desktop" title="Desktop Mode (Drag & Pull)">
+          <span>🖥️ Desktop</span>
+          <span class="kn">ಡೆಸ್ಕ್‌ಟಾಪ್</span>
+        </button>
+        <button class="mode-btn" id="btn-mode-mobile" title="Mobile Mode (Easy Tap & Touch)">
+          <span>📱 Mobile</span>
+          <span class="kn">ಮೊಬೈಲ್</span>
+        </button>
+      </div>
+
+      <!-- Hide / Show All Text Toggle -->
+      <button class="btn-glass btn-hide-accent" id="btn-toggle-text" title="Hide All Text">
+        <span id="toggle-text-en">👁️ Hide Text</span>
+        <span class="kn" id="toggle-text-kn">ಪಠ್ಯ ಮರೆಮಾಡಿ</span>
       </button>
+
+      <button class="btn-glass" id="btn-reset-cam" title="Reset Camera">
+        <span>🎥 View</span>
+        <span class="kn">ಕ್ಯಾಮೆರಾ</span>
+      </button>
+
       <button class="btn-glass" id="btn-reset-sim" title="Reset Experiment">
-        <span>🔄 ಮರುಪ್ರಾರಂಭಿಸಿ</span>
-        <span class="kn">Reset Lab</span>
+        <span>🔄 Reset</span>
+        <span class="kn">ಮರುಪ್ರಾರಂಭಿಸಿ</span>
       </button>
     </div>
   </header>
 
-  <!-- Right Docked HUD Dashboard (Zero overlap with 3D table) -->
+  <!-- Floating Control Bar (Appears when All Text is Hidden: Previous, Next, Back/Show Text) -->
+  <div id="hidden-text-controls">
+    <button class="nav-pill-btn" id="btn-step-prev" title="Previous Step">
+      <span>⬅️ ಹಿಂದೆ • Previous</span>
+    </button>
+    <span class="nav-step-indicator" id="hidden-step-label">1 / 3</span>
+    <button class="nav-pill-btn primary" id="btn-step-next" title="Next Step">
+      <span>ಮುಂದೆ • Next ➡️</span>
+    </button>
+    <button class="nav-pill-btn back-show" id="btn-step-back" title="Back / Show All Text">
+      <span>↩️ ಹಿಂತಿರುಗಿ • Back / Show Text</span>
+    </button>
+  </div>
+
+  <!-- Right / Bottom Docked HUD Dashboard -->
   <aside id="hud-dashboard">
     <div class="hud-section-title">
       <span>ಪ್ರಗತಿ • Experiment Steps</span>
@@ -618,16 +868,24 @@
       <canvas id="evap-chart"></canvas>
     </div>
 
-    <!-- Controls Guide (Inside Right Dock, never covers table) -->
+    <!-- Controls Guide -->
     <div id="controls-hint">
       <div><strong>ಮಾರ್ಗದರ್ಶಿ • How to Use:</strong></div>
-      <div>1️⃣ <strong>ಪಾತ್ರೆ ಇರಿಸಿ:</strong> ಟೂಲ್‌ಬಾಕ್ಸ್‌ನಿಂದ 3 ಪಾತ್ರೆಗಳನ್ನು ಮೇಜಿಗೆ ಎಳೆಯಿರಿ.</div>
-      <div>2️⃣ <strong>ನೀರು ತೆಗೆದು ಹಾಕಿ:</strong> ಸಿರಿಂಜ್ ಅನ್ನು <strong>ನೀರಿನ ಬಟ್ಟಲಿನಲ್ಲಿ (Water Bowl)</strong> ಇರಿಸಿ ಪ್ಲಂಜರ್ ಮೇಲಕ್ಕೆ ಎಳೆಯಿರಿ (Pull to 20 ml), ನಂತರ ಪಾತ್ರೆಯ ಮೇಲೆ ತಂದು ಪ್ಲಂಜರ್ ಕೆಳಕ್ಕೆ ಒತ್ತಿ (Push Down) ಅಥವಾ ಕ್ಲಿಕ್ ಮಾಡಿ.</div>
-      <div>3️⃣ <strong>ಸ್ಟಾಪ್‌ವಾಚ್:</strong> 3D ಸ್ಟಾಪ್‌ವಾಚ್ ಕ್ಲಿಕ್ ಮಾಡಿ!</div>
+      <div id="hint-desktop">
+        <div>1️⃣ <strong>ಪಾತ್ರೆ ಇರಿಸಿ:</strong> ಟೂಲ್‌ಬಾಕ್ಸ್‌ನಿಂದ 3 ಪಾತ್ರೆಗಳನ್ನು ಮೇಜಿಗೆ ಎಳೆಯಿರಿ.</div>
+        <div>2️⃣ <strong>ನೀರು ತೆಗೆದು ಹಾಕಿ:</strong> ಸಿರಿಂಜ್ ಅನ್ನು <strong>ನೀರಿನ ಬಟ್ಟಲಿನಲ್ಲಿ</strong> ಇರಿಸಿ ಪ್ಲಂಜರ್ ಮೇಲಕ್ಕೆ ಎಳೆಯಿರಿ (20 ml), ನಂತರ ಪಾತ್ರೆಯ ಮೇಲೆ ತಂದು ಪ್ಲಂಜರ್ ಕೆಳಕ್ಕೆ ಒತ್ತಿ ಅಥವಾ ಕ್ಲಿಕ್ ಮಾಡಿ.</div>
+        <div>3️⃣ <strong>ಸ್ಟಾಪ್‌ವಾಚ್:</strong> 3D ಸ್ಟಾಪ್‌ವಾಚ್ ಕ್ಲಿಕ್ ಮಾಡಿ!</div>
+      </div>
+      <div id="hint-mobile" style="display:none;">
+        <div>📱 <strong>ಸುಲಭ ಮೊಬೈಲ್ ಮೋಡ್ (Easy Tap Mode):</strong></div>
+        <div>1️⃣ ಪ್ರತಿ ಪಾತ್ರೆಯನ್ನು <strong>ಟ್ಯಾಪ್ (Tap)</strong> ಮಾಡಿ ಮೇಜಿನ ಮೇಲೆ ಇರಿಸಿ.</div>
+        <div>2️⃣ <strong>ನೀರಿನ ಬಟ್ಟಲು / ಸಿರಿಂಜ್</strong> ಟ್ಯಾಪ್ ಮಾಡಿ 20 ml ತುಂಬಿಸಿ, ನಂತರ ಪ್ರತಿ ಪಾತ್ರೆಯನ್ನು ಟ್ಯಾಪ್ ಮಾಡಿ ನೀರು ಹಾಕಿ.</div>
+        <div>3️⃣ <strong>3D ಸ್ಟಾಪ್‌ವಾಚ್</strong> ಟ್ಯಾಪ್ ಮಾಡಿ ಪ್ರಯೋಗ ಪ್ರಾರಂಭಿಸಿ!</div>
+      </div>
     </div>
   </aside>
 
-  <!-- Confetti Overlay -->
+  <!-- Confetti Canvas -->
   <canvas id="confetti-canvas"></canvas>
 
   <!-- Result Pop-Up Modal -->
@@ -660,7 +918,7 @@
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
     // =========================================================================
-    // 1. SCENE, RENDERER, CAMERA & ORBIT CONTROLS (CENTERED IN UNOBSTRUCTED STAGE)
+    // 1. SCENE, RENDERER, CAMERA & ORBIT CONTROLS
     // =========================================================================
     const stageEl = document.getElementById('stage-area');
 
@@ -669,8 +927,8 @@
 
     function getStageSize() {
       return {
-        w: Math.max(320, stageEl.clientWidth),
-        h: Math.max(240, stageEl.clientHeight)
+        w: Math.max(280, stageEl.clientWidth),
+        h: Math.max(220, stageEl.clientHeight)
       };
     }
 
@@ -678,6 +936,8 @@
     const camera = new THREE.PerspectiveCamera(46, initSize.w / initSize.h, 0.1, 200);
     const DEFAULT_CAM_POS = new THREE.Vector3(0.0, 5.9, 10.4);
     const DEFAULT_CAM_TARGET = new THREE.Vector3(0.0, 0.75, 0.1);
+    const MOBILE_CAM_POS = new THREE.Vector3(0.0, 6.8, 12.2);
+    const MOBILE_CAM_TARGET = new THREE.Vector3(0.0, 0.55, 0.1);
     camera.position.copy(DEFAULT_CAM_POS);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
@@ -695,12 +955,14 @@
     controls.dampingFactor = 0.07;
     controls.maxPolarAngle = Math.PI * 0.46;
     controls.minDistance = 4.2;
-    controls.maxDistance = 16.5;
+    controls.maxDistance = 17.5;
     controls.update();
 
     // =========================================================================
     // 2. PROCEDURAL TEXTURES & COMPACT NON-OBSTRUCTING 3D LABELS
     // =========================================================================
+    const billboardSprites = [];
+
     function createWoodTexture() {
       const c = document.createElement('canvas');
       c.width = 512; c.height = 512;
@@ -826,6 +1088,7 @@
         redraw(t1, t2, bCol);
         tex.needsUpdate = true;
       };
+      billboardSprites.push(sprite);
       return sprite;
     }
 
@@ -995,7 +1258,7 @@
     toolboxLabel.position.set(TOOLBOX_POS.x, 0.25, -2.05);
     scene.add(toolboxLabel);
 
-    // 3 Experiment Placement Pads Side-by-Side (Center/Right of Table)
+    // 3 Experiment Placement Pads Side-by-Side
     const PLACEMENT_SLOTS = {
       bottle: { pos: new THREE.Vector3(-0.3, TABLE_TOP_Y, -0.35), color: 0x38bdf8 },
       cup:    { pos: new THREE.Vector3(1.2, TABLE_TOP_Y, -0.35),  color: 0xa78bfa },
@@ -1053,7 +1316,6 @@
       metalness: 0.08
     });
 
-    // Bowl geometry (wide clear glass bowl with blue water inside)
     const bowlBase = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.42, 0.04, 36), glassMat);
     bowlBase.position.y = 0.02;
     bowlBase.renderOrder = 2;
@@ -1070,7 +1332,6 @@
     bowlRim.rotation.x = Math.PI / 2;
     bowlRim.position.y = 0.6;
 
-    // Bowl Water Reservoir (starts at 100 ml, drops slightly as user takes 20 ml at a time)
     const bowlWaterMaxH = 0.42;
     const bowlWaterMesh = new THREE.Mesh(
       (() => {
@@ -1084,15 +1345,13 @@
     bowlWaterMesh.renderOrder = 1;
     bowlWaterMesh.userData = { rBot: 0.43, rTop: 0.61, maxH: bowlWaterMaxH, lastF: 1 };
 
-    // Invisible click target on Water Bowl so clicking it docks syringe into bowl
     const bowlHit = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.72, 0.48, 0.65, 20),
+      new THREE.CylinderGeometry(0.75, 0.5, 0.7, 20),
       new THREE.MeshBasicMaterial({ visible: false })
     );
-    bowlHit.position.y = 0.32;
+    bowlHit.position.y = 0.34;
     bowlHit.userData.kind = 'water_bowl';
 
-    // Glowing ring around bowl when user needs to fill syringe
     const bowlGlowRing = new THREE.Mesh(
       new THREE.RingGeometry(0.72, 0.8, 40),
       new THREE.MeshBasicMaterial({ color: 0x38bdf8, side: THREE.DoubleSide, transparent: true, opacity: 0.55 })
@@ -1164,7 +1423,7 @@
       lip.rotation.x = Math.PI / 2; lip.position.y = 1.76;
 
       const hitMesh = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.45, 0.45, 1.85, 16),
+        new THREE.CylinderGeometry(0.48, 0.48, 1.85, 16),
         new THREE.MeshBasicMaterial({ visible: false })
       );
       hitMesh.position.y = 0.92;
@@ -1174,7 +1433,7 @@
       waterMesh.position.y = 0.04;
 
       const label = makeBillboardSprite('A. ಬಾಟಲಿ • Bottle', '0.0 ml', 'rgba(15,23,42,0.85)', '#38bdf8');
-      label.position.set(0, 0.16, 0.72); // Tucked neatly at front base so it never blocks syringe above!
+      label.position.set(0, 0.16, 0.72);
 
       const shadowDisc = new THREE.Mesh(
         new THREE.CircleGeometry(0.42, 24),
@@ -1217,7 +1476,7 @@
       rim.rotation.x = Math.PI / 2; rim.position.y = 1.08;
 
       const hitMesh = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.56, 0.42, 1.15, 16),
+        new THREE.CylinderGeometry(0.58, 0.44, 1.15, 16),
         new THREE.MeshBasicMaterial({ visible: false })
       );
       hitMesh.position.y = 0.58;
@@ -1269,10 +1528,10 @@
       rimLip.rotation.x = Math.PI / 2; rimLip.position.y = 0.23;
 
       const hitMesh = new THREE.Mesh(
-        new THREE.CylinderGeometry(1.12, 0.9, 0.35, 24),
+        new THREE.CylinderGeometry(1.15, 0.92, 0.38, 24),
         new THREE.MeshBasicMaterial({ visible: false })
       );
-      hitMesh.position.y = 0.17;
+      hitMesh.position.y = 0.19;
       hitMesh.userData.dragTarget = group;
 
       const waterMesh = buildContainerWaterMesh(0.79, 0.95, 0.13);
@@ -1304,11 +1563,10 @@
     });
 
     // =========================================================================
-    // 7. 3D INTERACTIVE SYRINGE (DIP IN BOWL -> PULL PLUNGER -> MOVE -> PUSH/CLICK)
+    // 7. 3D INTERACTIVE SYRINGE
     // =========================================================================
     const syringeGroup = new THREE.Group();
     const SYRINGE_HOME_POS = new THREE.Vector3(TOOLBOX_POS.x - 0.58, TABLE_TOP_Y + 0.05, 1.55);
-    // Dipping position places the needle tip submerged cleanly inside the Water Bowl
     const SYRINGE_BOWL_DIP_POS = new THREE.Vector3(BOWL_POS.x, TABLE_TOP_Y + 0.22, BOWL_POS.z);
     syringeGroup.position.copy(SYRINGE_HOME_POS);
     scene.add(syringeGroup);
@@ -1357,7 +1615,7 @@
     flange.position.y = BARREL_BASE_Y + BARREL_H;
 
     const barrelHit = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.28, 0.28, 0.96, 16),
+      new THREE.CylinderGeometry(0.32, 0.32, 0.98, 16),
       new THREE.MeshBasicMaterial({ visible: false })
     );
     barrelHit.position.y = 0.56;
@@ -1381,7 +1639,6 @@
     syringeWater.renderOrder = 1;
     syringeRig.add(syringeWater);
 
-    // Movable Plunger Group
     const plungerGroup = new THREE.Group();
     const PLUNGER_MIN_Y = BARREL_BASE_Y + 0.02;
     const PLUNGER_MAX_Y = BARREL_BASE_Y + 0.02 + SYRINGE_MAX_WATER_H;
@@ -1406,9 +1663,8 @@
     );
     thumbCap.position.y = 0.96;
 
-    // Generous collider covering plunger stem & cap strictly above barrelHit
     const plungerHit = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.38, 0.38, 0.52, 16),
+      new THREE.CylinderGeometry(0.42, 0.42, 0.56, 16),
       new THREE.MeshBasicMaterial({ visible: false })
     );
     plungerHit.position.y = 0.96;
@@ -1416,13 +1672,11 @@
 
     plungerGroup.add(rubberSeal, plungerStem, thumbCap, plungerHit);
 
-    // Compact digital ml readout tucked tightly beside barrel
     const syringeDigitalLabel = makeBillboardSprite('ಸಿರಿಂಜ್ • Syringe', '0.0 ml', 'rgba(15,23,42,0.92)', '#38bdf8');
     syringeDigitalLabel.position.set(0.65, 0.78, 0);
     syringeDigitalLabel.scale.set(0.95, 0.26, 1);
     syringeRig.add(syringeDigitalLabel);
 
-    // Live pouring water jet stream (visible during both manual plunger push & click inject)
     const pourStream = new THREE.Mesh(
       new THREE.CylinderGeometry(0.04, 0.055, 1, 14),
       new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.9 })
@@ -1518,7 +1772,7 @@
     watchTilt.add(watchFace);
 
     const watchHit = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.5, 0.5, 1.0, 16),
+      new THREE.CylinderGeometry(0.54, 0.54, 1.05, 16),
       new THREE.MeshBasicMaterial({ visible: false })
     );
     watchHit.position.set(0, 0.5, 0);
@@ -1590,11 +1844,13 @@
     }
 
     // =========================================================================
-    // 10. SIMULATION STATE, WATER BOWL + SYRINGE PULL/PUSH & RAYCASTER ENGINE
+    // 10. SIMULATION STATE, DESKTOP & MOBILE MODE, HIDE TEXT & STEP CONTROLS
     // =========================================================================
     const simState = {
+      deviceMode: 'desktop', // 'desktop' | 'mobile'
+      textHidden: false,
       sunIntensity: 75,
-      bowlWaterMl: 100.0, // Generous 100 ml blue water reservoir in bowl
+      bowlWaterMl: 100.0,
       syringeMl: 0,
       syringeZone: 'stand', // 'stand' | 'bowl' | 'container' | 'free'
       targetContainerId: null,
@@ -1610,9 +1866,7 @@
     const dragIntersect = new THREE.Vector3();
 
     let activeDrag = null;
-    let lastPointerUpDragTime = 0;
 
-    // Feedback updates go strictly into the Top Dock Banner (outside 3D activity area!)
     let bannerOverrideTimer = null;
     function setTopStatus(knMsg, enMsg, badgeText = null, duration = 0) {
       clearTimeout(bannerOverrideTimer);
@@ -1680,15 +1934,44 @@
       return null;
     }
 
+    function placeContainerOnSlot(c) {
+      const slot = PLACEMENT_SLOTS[c.id];
+      c.group.position.set(slot.pos.x, TABLE_TOP_Y, slot.pos.z);
+      c.shadowDisc.visible = false;
+      c.placed = true;
+      const placedCount = Object.values(containers).filter(x => x.placed).length;
+      if (placedCount === 3 && simState.syringeZone === 'stand') {
+        dockSyringeToBowl();
+      }
+      updateDashboardUI();
+    }
+
     function dockSyringeToBowl() {
       syringeGroup.position.copy(SYRINGE_BOWL_DIP_POS);
       simState.syringeZone = 'bowl';
       simState.targetContainerId = null;
       setTopStatus(
-        'ಸಿರಿಂಜ್ ನೀರಿನ ಬಟ್ಟಲಿನಲ್ಲಿದೆ — ನೀಲಿ ಪ್ಲಂಜರ್ ಅನ್ನು ಮೇಲಕ್ಕೆ ಎಳೆದು 20 ml ತುಂಬಿಸಿ!',
-        'Syringe is in the Water Bowl — Pull the blue plunger UP to draw 20 ml!',
-        'ಹಂತ 2 • Pull'
+        simState.deviceMode === 'mobile'
+          ? 'ಸಿರಿಂಜ್ ಬಟ್ಟಲಿನಲ್ಲಿದೆ — ಸಿರಿಂಜ್ ಅಥವಾ ಬಟ್ಟಲನ್ನು ಟ್ಯಾಪ್ ಮಾಡಿ 20 ml ತುಂಬಿಸಿ!'
+          : 'ಸಿರಿಂಜ್ ನೀರಿನ ಬಟ್ಟಲಿನಲ್ಲಿದೆ — ನೀಲಿ ಪ್ಲಂಜರ್ ಅನ್ನು ಮೇಲಕ್ಕೆ ಎಳೆದು 20 ml ತುಂಬಿಸಿ!',
+        simState.deviceMode === 'mobile'
+          ? 'Syringe is in the Bowl — Tap the Syringe or Bowl to draw 20 ml!'
+          : 'Syringe is in the Water Bowl — Pull the blue plunger UP to draw 20 ml!',
+        'ಹಂತ 2 • Fill'
       );
+    }
+
+    function quickFillSyringeFromBowl() {
+      if (simState.syringeZone !== 'bowl') {
+        syringeGroup.position.copy(SYRINGE_BOWL_DIP_POS);
+        simState.syringeZone = 'bowl';
+      }
+      const need = Math.max(0, 20 - simState.syringeMl);
+      simState.syringeMl = 20.0;
+      simState.bowlWaterMl = Math.max(10, simState.bowlWaterMl - need);
+      syncSyringeVisuals();
+      syncBowlVisuals();
+      updateDashboardUI();
     }
 
     function completeContainerFill(c) {
@@ -1706,7 +1989,6 @@
         simState.syringeZone = 'stand';
         simState.targetContainerId = null;
       } else {
-        // Return smoothly to the Water Bowl ready to pull the next 20 ml!
         syringeGroup.position.copy(SYRINGE_BOWL_DIP_POS);
         simState.syringeZone = 'bowl';
         simState.targetContainerId = null;
@@ -1714,7 +1996,6 @@
       updateDashboardUI();
     }
 
-    // Animated click-to-inject fallback (in addition to manual plunger push-down!)
     function animateInjectIntoContainer(c) {
       if (simState.injecting || simState.running || simState.completed) return;
       if (!c.placed || c.waterMl >= 19.9 || simState.syringeMl < 1.0) return;
@@ -1724,7 +2005,7 @@
       syringeGroup.position.set(c.group.position.x, c.pourY, c.group.position.z);
 
       const startTime = performance.now();
-      const duration = 600;
+      const duration = 560;
       const startSyringeMl = simState.syringeMl;
       const startContainerMl = c.waterMl;
       const targetAdd = Math.min(startSyringeMl, 20 - startContainerMl);
@@ -1770,7 +2051,7 @@
     }
 
     renderer.domElement.addEventListener('pointerdown', (e) => {
-      if (e.button !== 0 || simState.injecting || simState.completed) return;
+      if ((e.pointerType === 'mouse' && e.button !== 0) || simState.injecting || simState.completed) return;
       updatePointer(e);
       raycaster.setFromCamera(pointer, camera);
 
@@ -1778,6 +2059,7 @@
       if (hits.length === 0) return;
 
       const hitObj = hits[0].object;
+      const isTouchOrMobile = simState.deviceMode === 'mobile' || e.pointerType === 'touch';
 
       // 1) Clicked 3D Stopwatch
       if (hitObj.userData.kind === 'stopwatch') {
@@ -1792,27 +2074,35 @@
 
       const allPlaced = Object.values(containers).every(c => c.placed);
 
-      // 2) Clicked Water Bowl -> Dock Syringe into Bowl to draw water
+      // 2) Clicked Water Bowl
       if (hitObj.userData.kind === 'water_bowl') {
         if (!allPlaced) {
           setTopStatus('ಮೊದಲು 3 ಪಾತ್ರೆಗಳನ್ನು ಮೇಜಿನ ಮೇಲೆ ಇರಿಸಿ!', 'Place Bottle, Cup, and Plate on the table first (Step 1).', null, 2400);
           return;
         }
-        dockSyringeToBowl();
+        if (isTouchOrMobile) {
+          quickFillSyringeFromBowl();
+        } else {
+          dockSyringeToBowl();
+        }
         return;
       }
 
-      // 3) Clicked Syringe Plunger -> Pull UP (in Bowl) or Push DOWN (over Container)
+      // 3) Clicked Syringe Plunger
       if (hitObj.userData.kind === 'syringe_plunger') {
         if (!allPlaced) {
           setTopStatus('ಮೊದಲು 3 ಪಾತ್ರೆಗಳನ್ನು ಮೇಜಿನ ಮೇಲೆ ಇರಿಸಿ!', 'Place all 3 containers on the table first!', null, 2400);
           return;
         }
-        // If syringe is still on toolbox stand, dock it into the Water Bowl automatically!
+        // In Mobile Mode, tapping plunger in bowl/stand immediately draws 20 ml!
+        if (isTouchOrMobile && simState.syringeMl < 19.9) {
+          quickFillSyringeFromBowl();
+          return;
+        }
+
         if (simState.syringeZone === 'stand') {
           dockSyringeToBowl();
         }
-        // Check if syringe is over a container or over the bowl
         if (isSyringeOverBowl(syringeGroup.position)) {
           simState.syringeZone = 'bowl';
         } else {
@@ -1837,12 +2127,18 @@
         return;
       }
 
-      // 4) Clicked Syringe Barrel -> Drag syringe between Water Bowl & Containers
+      // 4) Clicked Syringe Barrel
       if (hitObj.userData.kind === 'syringe_barrel') {
         if (!allPlaced) {
           setTopStatus('ಮೊದಲು 3 ಪಾತ್ರೆಗಳನ್ನು ಮೇಜಿನ ಮೇಲೆ ಇರಿಸಿ!', 'Place all 3 containers on the table first!', null, 2400);
           return;
         }
+        // In Mobile Mode, tapping syringe barrel draws 20 ml from bowl automatically!
+        if (isTouchOrMobile && simState.syringeMl < 19.9) {
+          quickFillSyringeFromBowl();
+          return;
+        }
+
         controls.enabled = false;
         const dragY = Math.max(syringeGroup.position.y, TABLE_TOP_Y + 1.85);
         dragPlane.set(new THREE.Vector3(0, 1, 0), -dragY);
@@ -1867,10 +2163,23 @@
         const cGroup = hitObj.userData.dragTarget;
         const c = containers[cGroup.userData.containerId];
 
-        // If syringe has water and user clicks a placed unfilled container -> position & pour!
-        if (c.placed && simState.syringeMl > 0.5 && c.waterMl < 19.9) {
-          animateInjectIntoContainer(c);
+        // Mobile Mode: One-tap places unplaced container onto its pad!
+        if (!c.placed && isTouchOrMobile) {
+          placeContainerOnSlot(c);
           return;
+        }
+
+        // If placed & unfilled, and syringe has water -> pour!
+        if (c.placed && c.waterMl < 19.9) {
+          if (simState.syringeMl > 0.5) {
+            animateInjectIntoContainer(c);
+            return;
+          } else if (isTouchOrMobile && allPlaced) {
+            // In Mobile Mode, if user taps an empty container directly, auto-draw 20ml & pour!
+            quickFillSyringeFromBowl();
+            setTimeout(() => animateInjectIntoContainer(c), 180);
+            return;
+          }
         }
 
         if (c.waterMl > 0.1) {
@@ -1887,7 +2196,14 @@
         }
         c.shadowDisc.visible = true;
         c.group.position.y = liftY;
-        activeDrag = { type: 'container', container: c, offset };
+        activeDrag = {
+          type: 'container',
+          container: c,
+          offset,
+          startMouseX: e.clientX,
+          startMouseY: e.clientY,
+          moved: false
+        };
         renderer.domElement.style.cursor = 'grabbing';
       }
     });
@@ -1902,7 +2218,6 @@
         return;
       }
 
-      // --- PLUNGER PULL (IN BOWL) OR PUSH (OVER CONTAINER) ---
       if (activeDrag.type === 'plunger') {
         const dx = e.clientX - activeDrag.startMouseX;
         const dy = e.clientY - activeDrag.startMouseY;
@@ -1915,11 +2230,9 @@
         const len = Math.hypot(axisX, axisY) || 1;
         const projPixels = (dx * axisX + dy * axisY) / len;
 
-        // 130 px vertical drag = 20 ml stroke
         let newMl = THREE.MathUtils.clamp(activeDrag.startMl + (projPixels / 130) * 20, 0, 20);
 
         if (simState.syringeZone === 'bowl') {
-          // PULL UP in Water Bowl -> fill syringe from bowl
           if (newMl > 19.2) newMl = 20.0;
           const deltaDrawn = newMl - activeDrag.startMl;
           simState.syringeMl = newMl;
@@ -1927,10 +2240,9 @@
           syncSyringeVisuals();
           syncBowlVisuals();
         } else if (simState.syringeZone === 'container' && simState.targetContainerId) {
-          // PUSH DOWN over Container -> pour water live into container!
           const c = containers[simState.targetContainerId];
           if (c.waterMl < 19.99 && activeDrag.startMl > 0.1) {
-            if (newMl < 0.8) newMl = 0; // Tactile snap to empty at bottom of push
+            if (newMl < 0.8) newMl = 0;
             const pushedOut = Math.max(0, activeDrag.startMl - newMl);
             simState.syringeMl = newMl;
             c.waterMl = THREE.MathUtils.clamp(activeDrag.startContainerMl + pushedOut, 0, 20);
@@ -1939,7 +2251,6 @@
             const baseTitle = c.id === 'bottle' ? 'A. ಬಾಟಲಿ • Bottle' : c.id === 'cup' ? 'B. ಲೋಟ • Cup' : 'C. ತಟ್ಟೆ • Plate';
             c.label.userData.updateLabel(baseTitle, `${c.waterMl.toFixed(1)} ml`, '#38bdf8');
 
-            // Live water stream while pushing plunger down
             const streamTop = syringeGroup.position.y + 0.05;
             const streamBot = c.group.position.y + c.waterBaseY + 0.08;
             const streamH = Math.max(0.1, streamTop - streamBot);
@@ -1948,7 +2259,6 @@
             pourStream.position.set(c.group.position.x, streamBot + streamH / 2, c.group.position.z);
           }
         } else {
-          // Free air: remind user to dip in Water Bowl to draw water
           if (newMl > activeDrag.startMl + 1.5) {
             setTopStatus(
               'ಮೊದಲು ಸಿರಿಂಜ್ ಅನ್ನು ನೀರಿನ ಬಟ್ಟಲಿನಲ್ಲಿ (Water Bowl) ಇರಿಸಿ ನೀರು ತೆಗೆಯಿರಿ!',
@@ -1960,7 +2270,6 @@
         return;
       }
 
-      // --- DRAGGING SYRINGE BARREL ---
       if (activeDrag.type === 'syringe') {
         const dx = e.clientX - activeDrag.startMouseX;
         const dy = e.clientY - activeDrag.startMouseY;
@@ -1992,8 +2301,11 @@
         return;
       }
 
-      // --- DRAGGING CONTAINER ---
       if (activeDrag.type === 'container') {
+        const dx = e.clientX - activeDrag.startMouseX;
+        const dy = e.clientY - activeDrag.startMouseY;
+        if (Math.hypot(dx, dy) > 6) activeDrag.moved = true;
+
         const c = activeDrag.container;
         raycaster.setFromCamera(pointer, camera);
         dragPlane.set(new THREE.Vector3(0, 1, 0), -(TABLE_TOP_Y + 0.35));
@@ -2024,7 +2336,6 @@
         } else if (simState.syringeZone === 'container' && simState.targetContainerId) {
           const c = containers[simState.targetContainerId];
           if (!activeDrag.moved && simState.syringeMl > 0.5 && c.waterMl < 19.9) {
-            // Quick click on plunger over container also injects smoothly!
             animateInjectIntoContainer(c);
           } else if (c.waterMl >= 19.4 || simState.syringeMl <= 0.6) {
             completeContainerFill(c);
@@ -2041,7 +2352,6 @@
             }
           }
         } else {
-          // Finished dragging syringe
           if (simState.syringeZone === 'bowl') {
             dockSyringeToBowl();
           } else if (simState.syringeZone === 'container' && simState.targetContainerId) {
@@ -2076,7 +2386,6 @@
         }
       }
 
-      lastPointerUpDragTime = performance.now();
       activeDrag = null;
       controls.enabled = true;
       renderer.domElement.style.cursor = 'default';
@@ -2110,6 +2419,137 @@
         simState.running ? '#34d399' : '#fbbf24'
       );
       updateDashboardUI();
+    }
+
+    // =========================================================================
+    // 10B. HIDE ALL TEXT, PREVIOUS / NEXT / BACK CONTROLS & DESKTOP/MOBILE MODE
+    // =========================================================================
+    function setAllTextHidden(hidden) {
+      simState.textHidden = hidden;
+      document.body.classList.toggle('hide-all-text', hidden);
+      billboardSprites.forEach(sp => { sp.visible = !hidden; });
+
+      document.getElementById('toggle-text-en').textContent = hidden ? '👁️ Show Text' : '👁️ Hide Text';
+      document.getElementById('toggle-text-kn').textContent = hidden ? 'ಪಠ್ಯ ತೋರಿಸಿ' : 'ಪಠ್ಯ ಮರೆಮಾಡಿ';
+      handleResize();
+      updateDashboardUI();
+    }
+
+    function setDeviceMode(mode) {
+      simState.deviceMode = mode;
+      document.body.classList.toggle('mobile-mode', mode === 'mobile');
+      document.getElementById('btn-mode-desktop').classList.toggle('active', mode === 'desktop');
+      document.getElementById('btn-mode-mobile').classList.toggle('active', mode === 'mobile');
+
+      document.getElementById('hint-desktop').style.display = mode === 'desktop' ? 'block' : 'none';
+      document.getElementById('hint-mobile').style.display = mode === 'mobile' ? 'block' : 'none';
+
+      if (mode === 'mobile') {
+        camera.position.copy(MOBILE_CAM_POS);
+        controls.target.copy(MOBILE_CAM_TARGET);
+      } else {
+        camera.position.copy(DEFAULT_CAM_POS);
+        controls.target.copy(DEFAULT_CAM_TARGET);
+      }
+      controls.update();
+      handleResize();
+      updateDashboardUI();
+    }
+
+    // Step-by-step Next & Previous actions (for clean control bar when text is hidden)
+    function goNextStep() {
+      if (simState.completed) {
+        resetExperiment();
+        return;
+      }
+      const unplaced = Object.values(containers).find(c => !c.placed);
+      if (unplaced) {
+        placeContainerOnSlot(unplaced);
+        return;
+      }
+      const unfilled = Object.values(containers).find(c => c.waterMl < 19.9);
+      if (unfilled) {
+        if (simState.syringeMl < 19.9) {
+          quickFillSyringeFromBowl();
+        } else {
+          animateInjectIntoContainer(unfilled);
+        }
+        return;
+      }
+      if (!simState.running) {
+        handleStopwatchClick();
+      }
+    }
+
+    function goPreviousStep() {
+      if (simState.running || simState.completed || simState.simMinutes > 0) {
+        // Revert back to filled containers before stopwatch started
+        simState.running = false;
+        simState.completed = false;
+        simState.simMinutes = 0;
+        vaporParticles.forEach(p => { vaporGroup.remove(p.sprite); p.sprite.material.dispose(); });
+        vaporParticles.length = 0;
+        Object.values(containers).forEach(c => {
+          c.waterMl = 20.0;
+          updateWaterVolumeVisual(c.waterMesh, 1);
+          const baseTitle = c.id === 'bottle' ? 'A. ಬಾಟಲಿ • Bottle' : c.id === 'cup' ? 'B. ಲೋಟ • Cup' : 'C. ತಟ್ಟೆ • Plate';
+          c.label.userData.updateLabel(baseTitle, '20.0 ml', '#34d399');
+        });
+        drawStopwatchFace(0, false);
+        watchLabel.userData.updateLabel('ಸ್ಟಾಪ್‌ವಾಚ್ • Stopwatch', 'ಪ್ರಾರಂಭಿಸಲು ಕ್ಲಿಕ್ ಮಾಡಿ', '#fbbf24');
+        document.getElementById('result-overlay').classList.remove('open');
+        updateDashboardUI();
+        return;
+      }
+
+      // If syringe has water drawn, empty syringe back to bowl
+      if (simState.syringeMl > 0) {
+        simState.bowlWaterMl = Math.min(100, simState.bowlWaterMl + simState.syringeMl);
+        simState.syringeMl = 0;
+        syncSyringeVisuals();
+        syncBowlVisuals();
+        updateDashboardUI();
+        return;
+      }
+
+      // Empty the last filled container
+      const filledList = Object.values(containers).filter(c => c.waterMl > 0.1);
+      if (filledList.length > 0) {
+        const lastFilled = filledList[filledList.length - 1];
+        simState.bowlWaterMl = Math.min(100, simState.bowlWaterMl + lastFilled.waterMl);
+        lastFilled.waterMl = 0;
+        updateWaterVolumeVisual(lastFilled.waterMesh, 0);
+        const baseTitle = lastFilled.id === 'bottle' ? 'A. ಬಾಟಲಿ • Bottle' : lastFilled.id === 'cup' ? 'B. ಲೋಟ • Cup' : 'C. ತಟ್ಟೆ • Plate';
+        lastFilled.label.userData.updateLabel(baseTitle, '0.0 ml', '#38bdf8');
+        syncBowlVisuals();
+        dockSyringeToBowl();
+        updateDashboardUI();
+        return;
+      }
+
+      // Return the last placed container back to the Toolbox
+      const placedList = Object.values(containers).filter(c => c.placed);
+      if (placedList.length > 0) {
+        const lastPlaced = placedList[placedList.length - 1];
+        lastPlaced.placed = false;
+        lastPlaced.group.position.copy(lastPlaced.homePos);
+        syringeGroup.position.copy(SYRINGE_HOME_POS);
+        simState.syringeZone = 'stand';
+        updateDashboardUI();
+      }
+    }
+
+    document.getElementById('btn-toggle-text').addEventListener('click', () => setAllTextHidden(!simState.textHidden));
+    document.getElementById('btn-step-back').addEventListener('click', () => setAllTextHidden(false));
+    document.getElementById('btn-step-next').addEventListener('click', goNextStep);
+    document.getElementById('btn-step-prev').addEventListener('click', goPreviousStep);
+
+    document.getElementById('btn-mode-desktop').addEventListener('click', () => setDeviceMode('desktop'));
+    document.getElementById('btn-mode-mobile').addEventListener('click', () => setDeviceMode('mobile'));
+
+    // Auto-select Mobile Mode if opened on a narrow touch screen
+    if (window.innerWidth <= 768) {
+      setDeviceMode('mobile');
     }
 
     // =========================================================================
@@ -2238,6 +2678,7 @@
       const stepKn = document.getElementById('step-text-kn');
       const stepEn = document.getElementById('step-text-en');
       const statusTag = document.getElementById('sim-status-tag');
+      const hiddenStepLabel = document.getElementById('hidden-step-label');
 
       pillPlace.innerHTML = `1. ಪಾತ್ರೆ<br/>Place (${placedCount}/3)`;
       pillFill.innerHTML = `2. 20ml ನೀರು<br/>Fill (${readyCount}/3)`;
@@ -2247,35 +2688,54 @@
       pillFill.className = 'status-pill ' + (readyCount === 3 ? 'done' : (placedCount === 3 ? 'active' : ''));
       pillWatch.className = 'status-pill ' + (simState.completed ? 'done' : (simState.running || readyCount === 3 ? 'active' : ''));
 
+      const isMobile = simState.deviceMode === 'mobile';
+
       if (simState.completed) {
         stepBadge.textContent = 'ಪೂರ್ಣ • Done';
+        hiddenStepLabel.textContent = '3 / 3 ✓';
         stepKn.textContent = 'ಪ್ರಯೋಗ ಪೂರ್ಣಗೊಂಡಿದೆ! ಹೆಚ್ಚು ಮೇಲ್ಮೈ ವಿಸ್ತೀರ್ಣ = ವೇಗವಾದ ಆವಿಯಾಗುವಿಕೆ.';
         stepEn.textContent = 'Experiment complete! Wide Plate evaporated fastest due to larger surface area.';
         statusTag.textContent = 'ಪೂರ್ಣ • Complete';
         statusTag.style.color = '#34d399';
       } else if (simState.running) {
         stepBadge.textContent = 'ಚಾಲನೆಯಲ್ಲಿ • Live';
+        hiddenStepLabel.textContent = `${hrs}h ${String(mins).padStart(2, '0')}m`;
         stepKn.textContent = 'ಸಮಯ-ವೇಗ ಚಾಲನೆಯಲ್ಲಿದೆ! ಸೂರ್ಯನ ತೀವ್ರತೆ ಬದಲಾಯಿಸಿ ಆವಿಯಾಗುವಿಕೆಯನ್ನು ನೋಡಿ.';
         stepEn.textContent = 'Time-lapse running! Adjust Sun Intensity slider and watch vapor rise from the Plate.';
         statusTag.textContent = 'ನಡೆಯುತ್ತಿದೆ • Running';
         statusTag.style.color = '#38bdf8';
       } else if (placedCount < 3) {
         stepBadge.textContent = 'ಹಂತ 1 / Step 1';
-        stepKn.textContent = 'ಟೂಲ್‌ಬಾಕ್ಸ್‌ನಿಂದ ಬಾಟಲಿ, ಲೋಟ ಮತ್ತು ತಟ್ಟೆಯನ್ನು ಮೇಜಿನ ಮೇಲೆ ಎಳೆದು ಇರಿಸಿ.';
-        stepEn.textContent = 'Drag Bottle, Cup, and Plate from the Toolbox onto the 3 pads on the table.';
+        hiddenStepLabel.textContent = `1 / 3 (${placedCount}/3)`;
+        stepKn.textContent = isMobile
+          ? 'ಟೂಲ್‌ಬಾಕ್ಸ್‌ನಲ್ಲಿರುವ ಬಾಟಲಿ, ಲೋಟ ಮತ್ತು ತಟ್ಟೆಯನ್ನು ಟ್ಯಾಪ್ (Tap) ಮಾಡಿ ಮೇಜಿನ ಮೇಲೆ ಇರಿಸಿ.'
+          : 'ಟೂಲ್‌ಬಾಕ್ಸ್‌ನಿಂದ ಬಾಟಲಿ, ಲೋಟ ಮತ್ತು ತಟ್ಟೆಯನ್ನು ಮೇಜಿನ ಮೇಲೆ ಎಳೆದು ಇರಿಸಿ.';
+        stepEn.textContent = isMobile
+          ? 'Tap Bottle, Cup, and Plate in the Toolbox to place them on the table.'
+          : 'Drag Bottle, Cup, and Plate from the Toolbox onto the 3 pads on the table.';
       } else if (readyCount < 3) {
         stepBadge.textContent = 'ಹಂತ 2 / Step 2';
+        hiddenStepLabel.textContent = `2 / 3 (${readyCount}/3)`;
         if (simState.syringeMl >= 19.95) {
-          stepKn.textContent = '20 ml ಸಿದ್ಧ! ಸಿರಿಂಜ್ ಅನ್ನು ಪಾತ್ರೆಯ ಮೇಲೆ ಎಳೆದು ಪ್ಲಂಜರ್ ಕೆಳಕ್ಕೆ ಒತ್ತಿ (ಅಥವಾ ಕ್ಲಿಕ್ ಮಾಡಿ).';
-          stepEn.textContent = '20 ml ready! Drag Syringe over Bottle/Cup/Plate & push plunger down (or click).';
+          stepKn.textContent = isMobile
+            ? '20 ml ಸಿದ್ಧ! ಬಾಟಲಿ, ಲೋಟ ಅಥವಾ ತಟ್ಟೆಯನ್ನು ಟ್ಯಾಪ್ ಮಾಡಿ ನೀರು ಹಾಕಿ.'
+            : '20 ml ಸಿದ್ಧ! ಸಿರಿಂಜ್ ಅನ್ನು ಪಾತ್ರೆಯ ಮೇಲೆ ಎಳೆದು ಪ್ಲಂಜರ್ ಕೆಳಕ್ಕೆ ಒತ್ತಿ (ಅಥವಾ ಕ್ಲಿಕ್ ಮಾಡಿ).';
+          stepEn.textContent = isMobile
+            ? '20 ml ready! Tap Bottle, Cup, or Plate to pour water in.'
+            : '20 ml ready! Drag Syringe over Bottle/Cup/Plate & push plunger down (or click).';
         } else {
-          stepKn.textContent = 'ನೀರಿನ ಬಟ್ಟಲಿನಲ್ಲಿ ಸಿರಿಂಜ್ ಪ್ಲಂಜರ್ ಅನ್ನು ಮೇಲಕ್ಕೆ ಎಳೆದು 20 ml ನೀರು ತೆಗೆಯಿರಿ.';
-          stepEn.textContent = 'Pull the Syringe plunger UP in the Water Bowl to draw 20 ml of blue water.';
+          stepKn.textContent = isMobile
+            ? 'ನೀರಿನ ಬಟ್ಟಲು ಅಥವಾ ಸಿರಿಂಜ್ ಟ್ಯಾಪ್ ಮಾಡಿ 20 ml ನೀರು ತೆಗೆಯಿರಿ.'
+            : 'ನೀರಿನ ಬಟ್ಟಲಿನಲ್ಲಿ ಸಿರಿಂಜ್ ಪ್ಲಂಜರ್ ಅನ್ನು ಮೇಲಕ್ಕೆ ಎಳೆದು 20 ml ನೀರು ತೆಗೆಯಿರಿ.';
+          stepEn.textContent = isMobile
+            ? 'Tap the Water Bowl or Syringe to draw 20 ml of blue water.'
+            : 'Pull the Syringe plunger UP in the Water Bowl to draw 20 ml of blue water.';
         }
       } else {
         stepBadge.textContent = 'ಹಂತ 3 / Step 3';
-        stepKn.textContent = 'ಸಮಯ-ವೇಗ ಪ್ರಾರಂಭಿಸಲು ಮೇಜಿನ ಮೇಲಿರುವ 3D ಸ್ಟಾಪ್‌ವಾಚ್ ಅನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ!';
-        stepEn.textContent = 'Click the 3D Stopwatch on the table to start the evaporation time-lapse!';
+        hiddenStepLabel.textContent = '3 / 3';
+        stepKn.textContent = 'ಸಮಯ-ವೇಗ ಪ್ರಾರಂಭಿಸಲು ಮೇಜಿನ ಮೇಲಿರುವ 3D ಸ್ಟಾಪ್‌ವಾಚ್ ಅನ್ನು ಕ್ಲಿಕ್ / ಟ್ಯಾಪ್ ಮಾಡಿ!';
+        stepEn.textContent = 'Click or tap the 3D Stopwatch on the table to start the evaporation time-lapse!';
       }
 
       drawBarGraph();
@@ -2397,8 +2857,13 @@
     document.getElementById('btn-reset-sim').addEventListener('click', resetExperiment);
     document.getElementById('btn-play-again').addEventListener('click', resetExperiment);
     document.getElementById('btn-reset-cam').addEventListener('click', () => {
-      camera.position.copy(DEFAULT_CAM_POS);
-      controls.target.copy(DEFAULT_CAM_TARGET);
+      if (simState.deviceMode === 'mobile') {
+        camera.position.copy(MOBILE_CAM_POS);
+        controls.target.copy(MOBILE_CAM_TARGET);
+      } else {
+        camera.position.copy(DEFAULT_CAM_POS);
+        controls.target.copy(DEFAULT_CAM_TARGET);
+      }
       controls.update();
     });
 
@@ -2414,7 +2879,6 @@
       const dt = Math.min(0.05, (now - lastTime) / 1000);
       lastTime = now;
 
-      // Pulse placement rings & water bowl ring subtly
       Object.entries(slotRings).forEach(([key, ring]) => {
         ring.material.opacity = !containers[key].placed
           ? 0.45 + 0.35 * Math.sin(now * 0.005)
@@ -2489,4 +2953,3 @@
   </script>
 </body>
 </html>
-             
