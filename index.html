@@ -10,9 +10,8 @@
 
   <style>
     :root {
-      --glass-bg: rgba(15, 23, 42, 0.88);
+      --glass-bg: rgba(15, 23, 42, 0.9);
       --glass-border: rgba(255, 255, 255, 0.16);
-      --glass-highlight: rgba(255, 255, 255, 0.08);
       --accent-cyan: #38bdf8;
       --accent-amber: #fbbf24;
       --accent-emerald: #34d399;
@@ -34,6 +33,7 @@
     html, body {
       width: 100%;
       height: 100%;
+      height: 100dvh;
       overflow: hidden;
       font-family: 'Plus Jakarta Sans', 'Noto Sans Kannada', system-ui, sans-serif;
       background: #0f172a;
@@ -49,17 +49,18 @@
       bottom: 0;
       z-index: 1;
       overflow: hidden;
-      transition: all 0.25s ease;
       touch-action: none;
+      background: #0284c7;
     }
 
     #stage-area canvas {
       display: block;
-      width: 100%;
-      height: 100%;
+      width: 100% !important;
+      height: 100% !important;
+      touch-action: none;
     }
 
-    /* Top Dock Bar (Completely outside 3D activity area) */
+    /* Top Dock Bar */
     #top-dock {
       position: fixed;
       top: 0;
@@ -67,25 +68,23 @@
       right: 0;
       height: var(--top-h);
       z-index: 15;
-      background: linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.88));
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.97), rgba(15, 23, 42, 0.9));
       border-bottom: 1px solid var(--glass-border);
-      padding: 8px 12px;
+      padding: 6px 10px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
-      transition: background 0.25s ease, border-color 0.25s ease;
+      gap: 8px;
     }
 
     #title-card {
-      min-width: 215px;
-      max-width: 275px;
+      min-width: 210px;
+      max-width: 270px;
     }
 
     #title-card h1 {
       font-size: 0.88rem;
       font-weight: 800;
-      letter-spacing: -0.01em;
       background: linear-gradient(135deg, #7dd3fc, #fde68a);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -101,13 +100,13 @@
     /* Instruction & Feedback Strip inside Top Dock */
     #step-banner {
       flex: 1;
-      background: rgba(30, 41, 59, 0.78);
+      background: rgba(30, 41, 59, 0.82);
       border: 1px solid rgba(56, 189, 248, 0.35);
       border-radius: 12px;
-      padding: 7px 12px;
+      padding: 6px 10px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       min-width: 0;
     }
 
@@ -115,8 +114,8 @@
       background: linear-gradient(135deg, #0284c7, #38bdf8);
       color: #fff;
       font-weight: 800;
-      font-size: 0.72rem;
-      padding: 5px 10px;
+      font-size: 0.7rem;
+      padding: 5px 9px;
       border-radius: 999px;
       white-space: nowrap;
       flex-shrink: 0;
@@ -128,7 +127,7 @@
     }
 
     #step-text-kn {
-      font-size: 0.76rem;
+      font-size: 0.75rem;
       font-weight: 700;
       color: #fde68a;
       white-space: nowrap;
@@ -137,7 +136,7 @@
     }
 
     #step-text-en {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       color: var(--text-primary);
       white-space: nowrap;
       overflow: hidden;
@@ -147,31 +146,30 @@
     #action-buttons {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       flex-shrink: 0;
     }
 
     /* Desktop / Mobile Mode Segmented Switch */
     .mode-switch {
       display: flex;
-      background: rgba(2, 6, 23, 0.65);
+      background: rgba(2, 6, 23, 0.7);
       border: 1px solid var(--glass-border);
       border-radius: 10px;
-      padding: 3px;
-      gap: 3px;
+      padding: 2px;
+      gap: 2px;
     }
 
     .mode-btn {
-      padding: 5px 9px;
-      border-radius: 7px;
+      padding: 5px 8px;
+      border-radius: 8px;
       border: none;
       background: transparent;
       color: var(--text-secondary);
       font-family: inherit;
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.2s ease;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -179,52 +177,40 @@
     }
 
     .mode-btn span.kn {
-      font-size: 0.62rem;
+      font-size: 0.6rem;
       font-weight: 600;
     }
 
     .mode-btn.active {
       background: linear-gradient(135deg, #0284c7, #2563eb);
       color: #ffffff;
-      box-shadow: 0 2px 10px rgba(37, 99, 235, 0.45);
     }
 
     .btn-glass {
-      padding: 6px 10px;
+      padding: 5px 9px;
       border-radius: 10px;
       border: 1px solid var(--glass-border);
-      background: rgba(30, 41, 59, 0.8);
+      background: rgba(30, 41, 59, 0.85);
       color: var(--text-primary);
       font-family: inherit;
-      font-size: 0.71rem;
+      font-size: 0.69rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s ease;
       display: flex;
       flex-direction: column;
       align-items: center;
-      line-height: 1.2;
+      line-height: 1.15;
       white-space: nowrap;
     }
 
-    .btn-glass:hover {
-      background: rgba(51, 65, 85, 0.95);
-      border-color: var(--accent-cyan);
-    }
-
     .btn-glass span.kn {
-      font-size: 0.64rem;
+      font-size: 0.61rem;
       color: #bae6fd;
     }
 
     .btn-hide-accent {
-      border-color: rgba(251, 191, 36, 0.45);
-      background: rgba(120, 53, 15, 0.35);
-    }
-
-    .btn-hide-accent:hover {
-      border-color: #fbbf24;
-      background: rgba(146, 64, 14, 0.55);
+      border-color: rgba(251, 191, 36, 0.5);
+      background: rgba(120, 53, 15, 0.42);
     }
 
     /* Right Docked HUD Dashboard (Desktop Mode) */
@@ -236,15 +222,37 @@
       width: var(--side-w);
       z-index: 10;
       background: var(--glass-bg);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
       border-left: 1px solid var(--glass-border);
       padding: 12px 14px;
       display: flex;
       flex-direction: column;
       gap: 9px;
       overflow-y: auto;
-      transition: all 0.25s ease;
+    }
+
+    /* Mobile Instruction Strip (Shown inside HUD on Mobile) */
+    #mobile-step-card {
+      display: none;
+      background: rgba(30, 41, 59, 0.9);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 10px;
+      padding: 8px 10px;
+    }
+
+    #mobile-step-kn {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #fde68a;
+      line-height: 1.35;
+    }
+
+    #mobile-step-en {
+      font-size: 0.7rem;
+      color: #e2e8f0;
+      margin-top: 2px;
+      line-height: 1.3;
     }
 
     .hud-section-title {
@@ -260,7 +268,6 @@
       padding-bottom: 4px;
     }
 
-    /* Progress Pills inside Right Dock */
     .status-pill-row {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -280,20 +287,19 @@
     }
 
     .status-pill.done {
-      background: rgba(16, 185, 129, 0.2);
+      background: rgba(16, 185, 129, 0.22);
       border-color: rgba(52, 211, 153, 0.6);
       color: #a7f3d0;
     }
 
     .status-pill.active {
-      background: rgba(56, 189, 248, 0.2);
+      background: rgba(56, 189, 248, 0.22);
       border-color: rgba(56, 189, 248, 0.65);
       color: #e0f2fe;
     }
 
-    /* Clock & Sun Display */
     .time-box {
-      background: rgba(2, 6, 23, 0.5);
+      background: rgba(2, 6, 23, 0.55);
       border: 1px solid rgba(56, 189, 248, 0.25);
       border-radius: 10px;
       padding: 8px 10px;
@@ -309,11 +315,10 @@
     }
 
     #sim-time-display {
-      font-size: 0.96rem;
+      font-size: 0.95rem;
       font-weight: 800;
       color: var(--accent-amber);
       text-align: right;
-      line-height: 1.2;
     }
 
     #sim-time-kn {
@@ -323,7 +328,6 @@
       text-align: right;
     }
 
-    /* Sun Intensity Slider */
     .sun-control {
       background: rgba(2, 6, 23, 0.45);
       border: 1px solid rgba(251, 191, 36, 0.25);
@@ -356,7 +360,6 @@
       border-radius: 999px;
       background: linear-gradient(90deg, #334155 0%, #f59e0b 50%, #fef08a 100%);
       outline: none;
-      cursor: pointer;
     }
 
     input[type="range"]#sun-slider::-webkit-slider-thumb {
@@ -366,11 +369,8 @@
       border-radius: 50%;
       background: #fff;
       border: 3px solid #f59e0b;
-      box-shadow: 0 0 10px rgba(251, 191, 36, 0.85);
-      cursor: pointer;
     }
 
-    /* Water Level Rows */
     .water-metrics {
       display: flex;
       flex-direction: column;
@@ -411,10 +411,8 @@
     .metric-evap {
       font-size: 0.64rem;
       color: #94a3b8;
-      font-weight: 500;
     }
 
-    /* Live Canvas Bar Graph */
     .chart-wrapper {
       background: rgba(2, 6, 23, 0.58);
       border: 1px solid rgba(255, 255, 255, 0.1);
@@ -424,11 +422,10 @@
 
     #evap-chart {
       width: 100%;
-      height: 148px;
+      height: 140px;
       display: block;
     }
 
-    /* Compact Controls Guide inside Right Dock */
     #controls-hint {
       font-size: 0.67rem;
       color: #cbd5e1;
@@ -440,62 +437,51 @@
     }
 
     /* =========================================================================
-       MOBILE MODE LAYOUT (EASY TOUCH OPERATION ON PHONES & TABLETS)
+       MOBILE MODE LAYOUT (GUARANTEES 3D STAGE IS ALWAYS VISIBLE ON PHONES)
        ========================================================================= */
     body.mobile-mode {
-      --top-h: 58px;
+      --top-h: 54px;
     }
 
-    body.mobile-mode #title-card {
-      display: none;
+    body.mobile-mode #title-card,
+    body.mobile-mode #step-banner {
+      display: none !important;
+    }
+
+    body.mobile-mode #top-dock {
+      justify-content: center;
+      padding: 4px 6px;
+    }
+
+    body.mobile-mode #action-buttons {
+      width: 100%;
+      justify-content: space-between;
+      gap: 4px;
     }
 
     body.mobile-mode #stage-area {
-      top: var(--top-h);
+      top: 54px;
       left: 0;
       right: 0;
-      bottom: 36vh;
+      bottom: auto;
+      height: 55vh;
+      height: calc(58dvh - 54px);
     }
 
     body.mobile-mode #hud-dashboard {
-      top: auto;
+      top: calc(58dvh);
       left: 0;
       right: 0;
       bottom: 0;
       width: 100%;
-      height: 36vh;
+      height: 42dvh;
       border-left: none;
       border-top: 1px solid var(--glass-border);
-      padding: 10px 12px 16px;
-      gap: 8px;
+      padding: 10px 12px 18px;
     }
 
-    body.mobile-mode .btn-glass {
-      padding: 6px 8px;
-      font-size: 0.68rem;
-    }
-
-    body.mobile-mode .mode-btn {
-      padding: 5px 7px;
-      font-size: 0.66rem;
-    }
-
-    body.mobile-mode #step-banner {
-      padding: 5px 9px;
-      gap: 7px;
-    }
-
-    body.mobile-mode .step-badge {
-      font-size: 0.66rem;
-      padding: 4px 8px;
-    }
-
-    body.mobile-mode #step-text-kn {
-      font-size: 0.72rem;
-    }
-
-    body.mobile-mode #step-text-en {
-      font-size: 0.65rem;
+    body.mobile-mode #mobile-step-card {
+      display: block;
     }
 
     /* =========================================================================
@@ -506,6 +492,7 @@
       left: 0 !important;
       right: 0 !important;
       bottom: 0 !important;
+      height: 100dvh !important;
     }
 
     body.hide-all-text #hud-dashboard,
@@ -522,66 +509,51 @@
     }
 
     body.hide-all-text #action-buttons {
+      width: auto;
       pointer-events: auto;
-      background: rgba(15, 23, 42, 0.78);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      padding: 5px 8px;
-      border-radius: 14px;
+      background: rgba(15, 23, 42, 0.82);
+      padding: 4px 7px;
+      border-radius: 12px;
       border: 1px solid rgba(255, 255, 255, 0.18);
     }
 
-    /* Floating Step & Back Controller shown when all text is hidden */
     #hidden-text-controls {
       position: fixed;
-      bottom: 18px;
+      bottom: 16px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 30;
       display: none;
       align-items: center;
-      gap: 10px;
-      background: rgba(15, 23, 42, 0.88);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(56, 189, 248, 0.45);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
-      padding: 8px 14px;
+      gap: 8px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(56, 189, 248, 0.5);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+      padding: 7px 12px;
       border-radius: 999px;
+      max-width: 96vw;
     }
 
     body.hide-all-text #hidden-text-controls {
       display: flex;
-      animation: popUp 0.28s ease;
     }
 
     .nav-pill-btn {
       border: 1px solid rgba(255, 255, 255, 0.18);
-      background: rgba(30, 41, 59, 0.9);
+      background: rgba(30, 41, 59, 0.95);
       color: #f8fafc;
       font-family: inherit;
-      font-size: 0.78rem;
+      font-size: 0.74rem;
       font-weight: 700;
-      padding: 8px 15px;
+      padding: 8px 12px;
       border-radius: 999px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s ease;
       white-space: nowrap;
-    }
-
-    .nav-pill-btn:hover {
-      background: rgba(51, 65, 85, 1);
-      border-color: #38bdf8;
-      transform: translateY(-1px);
     }
 
     .nav-pill-btn.primary {
       background: linear-gradient(135deg, #0284c7, #2563eb);
       border-color: rgba(125, 211, 252, 0.6);
-      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.45);
     }
 
     .nav-pill-btn.back-show {
@@ -591,10 +563,10 @@
     }
 
     .nav-step-indicator {
-      font-size: 0.78rem;
+      font-size: 0.74rem;
       font-weight: 800;
       color: #38bdf8;
-      padding: 0 6px;
+      padding: 0 4px;
       white-space: nowrap;
     }
 
@@ -610,103 +582,78 @@
       position: fixed;
       inset: 0;
       z-index: 50;
-      background: rgba(2, 6, 23, 0.65);
-      backdrop-filter: blur(8px);
+      background: rgba(2, 6, 23, 0.7);
       display: none;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 16px;
     }
 
     #result-overlay.open {
       display: flex;
-      animation: fadeIn 0.35s ease;
     }
 
     #result-modal {
-      max-width: 560px;
+      max-width: 540px;
       width: 100%;
-      padding: 28px;
-      border-radius: 22px;
-      background: linear-gradient(155deg, rgba(15, 23, 42, 0.94), rgba(30, 41, 59, 0.92));
+      padding: 22px;
+      border-radius: 20px;
+      background: linear-gradient(155deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.95));
       border: 2px solid rgba(56, 189, 248, 0.65);
-      box-shadow: 0 0 55px rgba(56, 189, 248, 0.4), 0 20px 60px rgba(0, 0, 0, 0.6);
       text-align: center;
-      animation: popUp 0.4s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     #result-modal h2 {
-      font-size: 1.42rem;
+      font-size: 1.25rem;
       font-weight: 800;
-      background: linear-gradient(135deg, #fde047, #38bdf8, #34d399);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: #fde047;
       margin-bottom: 8px;
     }
 
     .result-summary-text {
-      font-size: 0.92rem;
-      line-height: 1.6;
+      font-size: 0.88rem;
+      line-height: 1.55;
       color: #f1f5f9;
       background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      border-radius: 14px;
-      padding: 14px 16px;
-      margin: 14px 0;
+      border-radius: 12px;
+      padding: 12px;
+      margin: 12px 0;
     }
 
     .result-cards {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin: 14px 0 18px;
+      gap: 8px;
+      margin: 12px 0 14px;
     }
 
     .res-card {
       background: rgba(2, 6, 23, 0.55);
       border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 12px;
-      padding: 10px 8px;
+      border-radius: 10px;
+      padding: 8px 6px;
     }
 
-    .res-card .label { font-size: 0.72rem; color: #94a3b8; }
-    .res-card .val { font-size: 1.15rem; font-weight: 800; margin-top: 4px; color: #38bdf8; }
+    .res-card .label { font-size: 0.68rem; color: #94a3b8; }
+    .res-card .val { font-size: 1.05rem; font-weight: 800; margin-top: 3px; color: #38bdf8; }
 
     .btn-primary {
       background: linear-gradient(135deg, #0284c7, #2563eb);
       color: #fff;
       border: none;
-      padding: 12px 24px;
+      padding: 11px 22px;
       border-radius: 12px;
       font-family: inherit;
-      font-size: 0.92rem;
+      font-size: 0.88rem;
       font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 8px 24px rgba(37, 99, 235, 0.45);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 28px rgba(56, 189, 248, 0.55);
-    }
-
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes popUp {
-      from { opacity: 0; transform: scale(0.88) translateY(16px); }
-      to { opacity: 1; transform: scale(1) translateY(0); }
     }
 
     @media (max-width: 1120px) {
       #title-card { display: none; }
     }
-
-    @media (max-width: 900px) {
-      :root { --side-w: 265px; }
-    }
   </style>
 
-  <!-- Three.js & OrbitControls via CDN Import Map -->
   <script type="importmap">
     {
       "imports": {
@@ -736,52 +683,49 @@
     </div>
 
     <div id="action-buttons">
-      <!-- Desktop / Mobile Mode Switcher -->
       <div class="mode-switch" role="group" aria-label="Device Mode">
-        <button class="mode-btn active" id="btn-mode-desktop" title="Desktop Mode (Drag & Pull)">
+        <button class="mode-btn active" id="btn-mode-desktop">
           <span>🖥️ Desktop</span>
           <span class="kn">ಡೆಸ್ಕ್‌ಟಾಪ್</span>
         </button>
-        <button class="mode-btn" id="btn-mode-mobile" title="Mobile Mode (Easy Tap & Touch)">
+        <button class="mode-btn" id="btn-mode-mobile">
           <span>📱 Mobile</span>
           <span class="kn">ಮೊಬೈಲ್</span>
         </button>
       </div>
 
-      <!-- Hide / Show All Text Toggle -->
-      <button class="btn-glass btn-hide-accent" id="btn-toggle-text" title="Hide All Text">
+      <button class="btn-glass btn-hide-accent" id="btn-toggle-text">
         <span id="toggle-text-en">👁️ Hide Text</span>
         <span class="kn" id="toggle-text-kn">ಪಠ್ಯ ಮರೆಮಾಡಿ</span>
       </button>
 
-      <button class="btn-glass" id="btn-reset-cam" title="Reset Camera">
+      <button class="btn-glass" id="btn-reset-cam">
         <span>🎥 View</span>
         <span class="kn">ಕ್ಯಾಮೆರಾ</span>
       </button>
 
-      <button class="btn-glass" id="btn-reset-sim" title="Reset Experiment">
+      <button class="btn-glass" id="btn-reset-sim">
         <span>🔄 Reset</span>
         <span class="kn">ಮರುಪ್ರಾರಂಭಿಸಿ</span>
       </button>
     </div>
   </header>
 
-  <!-- Floating Control Bar (Appears when All Text is Hidden: Previous, Next, Back/Show Text) -->
+  <!-- Floating Control Bar (Appears when All Text is Hidden: Previous, Next, Back) -->
   <div id="hidden-text-controls">
-    <button class="nav-pill-btn" id="btn-step-prev" title="Previous Step">
-      <span>⬅️ ಹಿಂದೆ • Previous</span>
-    </button>
+    <button class="nav-pill-btn" id="btn-step-prev">⬅️ ಹಿಂದೆ • Prev</button>
     <span class="nav-step-indicator" id="hidden-step-label">1 / 3</span>
-    <button class="nav-pill-btn primary" id="btn-step-next" title="Next Step">
-      <span>ಮುಂದೆ • Next ➡️</span>
-    </button>
-    <button class="nav-pill-btn back-show" id="btn-step-back" title="Back / Show All Text">
-      <span>↩️ ಹಿಂತಿರುಗಿ • Back / Show Text</span>
-    </button>
+    <button class="nav-pill-btn primary" id="btn-step-next">ಮುಂದೆ • Next ➡️</button>
+    <button class="nav-pill-btn back-show" id="btn-step-back">↩️ ಹಿಂತಿರುಗಿ • Back</button>
   </div>
 
   <!-- Right / Bottom Docked HUD Dashboard -->
   <aside id="hud-dashboard">
+    <div id="mobile-step-card">
+      <div id="mobile-step-kn">1️⃣ ಟೂಲ್‌ಬಾಕ್ಸ್‌ನಲ್ಲಿರುವ ಬಾಟಲಿ, ಲೋಟ ಮತ್ತು ತಟ್ಟೆಯನ್ನು ಟ್ಯಾಪ್ (Tap) ಮಾಡಿ ಮೇಜಿನ ಮೇಲೆ ಇರಿಸಿ.</div>
+      <div id="mobile-step-en">Tap Bottle, Cup, and Plate in the Toolbox to place them on the table.</div>
+    </div>
+
     <div class="hud-section-title">
       <span>ಪ್ರಗತಿ • Experiment Steps</span>
       <span id="sim-status-tag" style="color:#fbbf24;">ಸಿದ್ಧತೆ • Setup</span>
@@ -793,7 +737,6 @@
       <div class="status-pill" id="pill-watch">3. ಸ್ಟಾಪ್‌ವಾಚ್<br/>Start</div>
     </div>
 
-    <!-- Simulated Time -->
     <div class="time-box">
       <div class="time-label">
         <div><strong>ಸಮಯ (Time-Lapse)</strong></div>
@@ -805,7 +748,6 @@
       </div>
     </div>
 
-    <!-- Sun Intensity Slider -->
     <div class="sun-control">
       <div class="sun-header">
         <span>☀️ ಸೂರ್ಯನ ತೀವ್ರತೆ - Sun Intensity</span>
@@ -818,7 +760,6 @@
       </div>
     </div>
 
-    <!-- Water Levels in ml -->
     <div class="hud-section-title">
       <span>ನೀರಿನ ಮಟ್ಟ • Water Level (ml)</span>
       <span>ಗುರಿ: 20 ml</span>
@@ -859,7 +800,6 @@
       </div>
     </div>
 
-    <!-- Live Canvas Bar Graph -->
     <div class="hud-section-title">
       <span>ಆವಿಯಾಗುವಿಕೆ ಗ್ರಾಫ್ • Live Bar Graph</span>
       <span>0 - 20 ml</span>
@@ -868,7 +808,6 @@
       <canvas id="evap-chart"></canvas>
     </div>
 
-    <!-- Controls Guide -->
     <div id="controls-hint">
       <div><strong>ಮಾರ್ಗದರ್ಶಿ • How to Use:</strong></div>
       <div id="hint-desktop">
@@ -885,10 +824,8 @@
     </div>
   </aside>
 
-  <!-- Confetti Canvas -->
   <canvas id="confetti-canvas"></canvas>
 
-  <!-- Result Pop-Up Modal -->
   <div id="result-overlay">
     <div id="result-modal">
       <h2>🎉 ಪ್ರಯೋಗ ಪೂರ್ಣಗೊಂಡಿದೆ! • Experiment Complete!</h2>
@@ -917,32 +854,32 @@
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-    // =========================================================================
-    // 1. SCENE, RENDERER, CAMERA & ORBIT CONTROLS
-    // =========================================================================
     const stageEl = document.getElementById('stage-area');
+    const isSmallScreen = window.innerWidth <= 820 || ('ontouchstart' in window && window.innerWidth <= 950);
+    if (isSmallScreen) {
+      document.body.classList.add('mobile-mode');
+    }
 
     const scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0xdbeafe, 0.011);
 
     function getStageSize() {
-      return {
-        w: Math.max(280, stageEl.clientWidth),
-        h: Math.max(220, stageEl.clientHeight)
-      };
+      const w = stageEl.clientWidth || window.innerWidth;
+      const h = stageEl.clientHeight || Math.max(260, Math.round(window.innerHeight * 0.52));
+      return { w, h };
     }
 
     const initSize = getStageSize();
     const camera = new THREE.PerspectiveCamera(46, initSize.w / initSize.h, 0.1, 200);
     const DEFAULT_CAM_POS = new THREE.Vector3(0.0, 5.9, 10.4);
     const DEFAULT_CAM_TARGET = new THREE.Vector3(0.0, 0.75, 0.1);
-    const MOBILE_CAM_POS = new THREE.Vector3(0.0, 6.8, 12.2);
+    const MOBILE_CAM_POS = new THREE.Vector3(0.0, 7.2, 13.0);
     const MOBILE_CAM_TARGET = new THREE.Vector3(0.0, 0.55, 0.1);
-    camera.position.copy(DEFAULT_CAM_POS);
+    camera.position.copy(isSmallScreen ? MOBILE_CAM_POS : DEFAULT_CAM_POS);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
     renderer.setSize(initSize.w, initSize.h);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -950,17 +887,14 @@
     stageEl.appendChild(renderer.domElement);
 
     const controls = new OrbitControls(camera, renderer.domElement);
-    controls.target.copy(DEFAULT_CAM_TARGET);
+    controls.target.copy(isSmallScreen ? MOBILE_CAM_TARGET : DEFAULT_CAM_TARGET);
     controls.enableDamping = true;
     controls.dampingFactor = 0.07;
     controls.maxPolarAngle = Math.PI * 0.46;
     controls.minDistance = 4.2;
-    controls.maxDistance = 17.5;
+    controls.maxDistance = 18.0;
     controls.update();
 
-    // =========================================================================
-    // 2. PROCEDURAL TEXTURES & COMPACT NON-OBSTRUCTING 3D LABELS
-    // =========================================================================
     const billboardSprites = [];
 
     function createWoodTexture() {
@@ -1048,6 +982,15 @@
       return tex;
     }
 
+    function drawRoundedBox(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      if (ctx.roundRect) {
+        ctx.roundRect(x, y, w, h, r);
+      } else {
+        ctx.rect(x, y, w, h);
+      }
+    }
+
     function makeBillboardSprite(textTop, textBottom = '', bg = 'rgba(15,23,42,0.82)', border = '#38bdf8') {
       const c = document.createElement('canvas');
       c.width = 480; c.height = 120;
@@ -1058,8 +1001,7 @@
         ctx.fillStyle = bg;
         ctx.strokeStyle = bCol;
         ctx.lineWidth = 4;
-        ctx.beginPath();
-        ctx.roundRect(10, 10, 460, 100, 24);
+        drawRoundedBox(ctx, 10, 10, 460, 100, 24);
         ctx.fill();
         ctx.stroke();
 
@@ -1092,9 +1034,7 @@
       return sprite;
     }
 
-    // =========================================================================
-    // 3. OUTDOOR PATIO ENVIRONMENT & DYNAMIC SUNLIGHT
-    // =========================================================================
+    // Outdoor Patio Environment & Dynamic Sunlight
     const TABLE_TOP_Y = 0;
     const TABLE_W = 8.6;
     const TABLE_D = 4.4;
@@ -1150,7 +1090,7 @@
     const sunLight = new THREE.DirectionalLight(0xfffbeb, 2.3);
     sunLight.position.set(9.5, 13.5, 6.5);
     sunLight.castShadow = true;
-    sunLight.shadow.mapSize.set(2048, 2048);
+    sunLight.shadow.mapSize.set(1024, 1024);
     sunLight.shadow.camera.near = 1;
     sunLight.shadow.camera.far = 36;
     const d = 7.5;
@@ -1212,9 +1152,7 @@
       scene.add(bush);
     });
 
-    // =========================================================================
-    // 4. LAB TABLE, TOOLBOX ZONE, WATER BOWL & SIDE-BY-SIDE PLACEMENT PADS
-    // =========================================================================
+    // Lab Table, Toolbox Zone, Water Bowl & Side-by-Side Placement Pads
     const woodTex = createWoodTexture();
     const tableGroup = new THREE.Group();
     scene.add(tableGroup);
@@ -1237,7 +1175,6 @@
       tableGroup.add(leg);
     });
 
-    // Toolbox Tray on the Left Side of Table
     const TOOLBOX_POS = new THREE.Vector3(-2.9, TABLE_TOP_Y, 0.0);
     const toolboxBase = new THREE.Mesh(
       new THREE.BoxGeometry(2.3, 0.05, 3.85),
@@ -1254,11 +1191,10 @@
     toolboxRim.position.set(TOOLBOX_POS.x, TABLE_TOP_Y + 0.015, TOOLBOX_POS.z);
     tableGroup.add(toolboxRim);
 
-    const toolboxLabel = makeBillboardSprite('ಟೂಲ್‌ಬಾಕ್ಸ್ • Toolbox', 'ಪಾತ್ರೆಗಳನ್ನು ಎಳೆಯಿರಿ', 'rgba(15,23,42,0.85)', '#38bdf8');
+    const toolboxLabel = makeBillboardSprite('ಟೂಲ್‌ಬಾಕ್ಸ್ • Toolbox', 'ಪಾತ್ರೆಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ', 'rgba(15,23,42,0.85)', '#38bdf8');
     toolboxLabel.position.set(TOOLBOX_POS.x, 0.25, -2.05);
     scene.add(toolboxLabel);
 
-    // 3 Experiment Placement Pads Side-by-Side
     const PLACEMENT_SLOTS = {
       bottle: { pos: new THREE.Vector3(-0.3, TABLE_TOP_Y, -0.35), color: 0x38bdf8 },
       cup:    { pos: new THREE.Vector3(1.2, TABLE_TOP_Y, -0.35),  color: 0xa78bfa },
@@ -1286,9 +1222,7 @@
       scene.add(padFill);
     });
 
-    // =========================================================================
-    // 5. WATER BOWL (SOURCE OF BLUE WATER FOR SYRINGE)
-    // =========================================================================
+    // Water Bowl
     const BOWL_POS = new THREE.Vector3(-0.9, TABLE_TOP_Y, 1.35);
     const bowlGroup = new THREE.Group();
     bowlGroup.position.copy(BOWL_POS);
@@ -1346,10 +1280,10 @@
     bowlWaterMesh.userData = { rBot: 0.43, rTop: 0.61, maxH: bowlWaterMaxH, lastF: 1 };
 
     const bowlHit = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.75, 0.5, 0.7, 20),
+      new THREE.CylinderGeometry(0.8, 0.55, 0.75, 20),
       new THREE.MeshBasicMaterial({ visible: false })
     );
-    bowlHit.position.y = 0.34;
+    bowlHit.position.y = 0.35;
     bowlHit.userData.kind = 'water_bowl';
 
     const bowlGlowRing = new THREE.Mesh(
@@ -1363,9 +1297,7 @@
     bowlLabel.position.set(0, 0.16, 0.88);
     bowlGroup.add(bowlBase, bowlWall, bowlRim, bowlWaterMesh, bowlHit, bowlGlowRing, bowlLabel);
 
-    // =========================================================================
-    // 6. CONTAINERS (BOTTLE, CUP, PLATE) & DYNAMIC WATER VOLUME MESHES
-    // =========================================================================
+    // Containers (Bottle, Cup, Plate)
     function buildContainerWaterMesh(rBot, rTop, maxH) {
       const geo = new THREE.CylinderGeometry(rTop, rBot, maxH, 36, 1, false);
       geo.translate(0, maxH / 2, 0);
@@ -1398,7 +1330,7 @@
 
     const containers = {};
 
-    // --- A. NARROW BOTTLE ---
+    // Narrow Bottle
     {
       const group = new THREE.Group();
       const homePos = new THREE.Vector3(TOOLBOX_POS.x - 0.56, TABLE_TOP_Y + 0.05, -1.2);
@@ -1423,10 +1355,10 @@
       lip.rotation.x = Math.PI / 2; lip.position.y = 1.76;
 
       const hitMesh = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.48, 0.48, 1.85, 16),
+        new THREE.CylinderGeometry(0.52, 0.52, 1.9, 16),
         new THREE.MeshBasicMaterial({ visible: false })
       );
-      hitMesh.position.y = 0.92;
+      hitMesh.position.y = 0.95;
       hitMesh.userData.dragTarget = group;
 
       const waterMesh = buildContainerWaterMesh(0.355, 0.355, 0.98);
@@ -1452,7 +1384,7 @@
       };
     }
 
-    // --- B. PLASTIC CUP ---
+    // Plastic Cup
     {
       const group = new THREE.Group();
       const homePos = new THREE.Vector3(TOOLBOX_POS.x + 0.56, TABLE_TOP_Y + 0.05, -0.98);
@@ -1476,10 +1408,10 @@
       rim.rotation.x = Math.PI / 2; rim.position.y = 1.08;
 
       const hitMesh = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.58, 0.44, 1.15, 16),
+        new THREE.CylinderGeometry(0.62, 0.48, 1.2, 16),
         new THREE.MeshBasicMaterial({ visible: false })
       );
-      hitMesh.position.y = 0.58;
+      hitMesh.position.y = 0.6;
       hitMesh.userData.dragTarget = group;
 
       const waterMesh = buildContainerWaterMesh(0.34, 0.47, 0.85);
@@ -1505,7 +1437,7 @@
       };
     }
 
-    // --- C. WIDE PLATE ---
+    // Wide Plate
     {
       const group = new THREE.Group();
       const homePos = new THREE.Vector3(TOOLBOX_POS.x, TABLE_TOP_Y + 0.05, 0.42);
@@ -1528,10 +1460,10 @@
       rimLip.rotation.x = Math.PI / 2; rimLip.position.y = 0.23;
 
       const hitMesh = new THREE.Mesh(
-        new THREE.CylinderGeometry(1.15, 0.92, 0.38, 24),
+        new THREE.CylinderGeometry(1.18, 0.95, 0.42, 24),
         new THREE.MeshBasicMaterial({ visible: false })
       );
-      hitMesh.position.y = 0.19;
+      hitMesh.position.y = 0.21;
       hitMesh.userData.dragTarget = group;
 
       const waterMesh = buildContainerWaterMesh(0.79, 0.95, 0.13);
@@ -1562,9 +1494,7 @@
       c.group.userData.containerId = c.id;
     });
 
-    // =========================================================================
-    // 7. 3D INTERACTIVE SYRINGE
-    // =========================================================================
+    // 3D Interactive Syringe
     const syringeGroup = new THREE.Group();
     const SYRINGE_HOME_POS = new THREE.Vector3(TOOLBOX_POS.x - 0.58, TABLE_TOP_Y + 0.05, 1.55);
     const SYRINGE_BOWL_DIP_POS = new THREE.Vector3(BOWL_POS.x, TABLE_TOP_Y + 0.22, BOWL_POS.z);
@@ -1615,7 +1545,7 @@
     flange.position.y = BARREL_BASE_Y + BARREL_H;
 
     const barrelHit = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.32, 0.32, 0.98, 16),
+      new THREE.CylinderGeometry(0.35, 0.35, 1.0, 16),
       new THREE.MeshBasicMaterial({ visible: false })
     );
     barrelHit.position.y = 0.56;
@@ -1664,7 +1594,7 @@
     thumbCap.position.y = 0.96;
 
     const plungerHit = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.42, 0.42, 0.56, 16),
+      new THREE.CylinderGeometry(0.45, 0.45, 0.6, 16),
       new THREE.MeshBasicMaterial({ visible: false })
     );
     plungerHit.position.y = 0.96;
@@ -1684,9 +1614,7 @@
     pourStream.visible = false;
     scene.add(pourStream);
 
-    // =========================================================================
-    // 8. 3D STOPWATCH ON THE TABLE
-    // =========================================================================
+    // 3D Stopwatch
     const stopwatchGroup = new THREE.Group();
     const STOPWATCH_POS = new THREE.Vector3(TOOLBOX_POS.x + 0.58, TABLE_TOP_Y + 0.05, 1.48);
     stopwatchGroup.position.copy(STOPWATCH_POS);
@@ -1750,7 +1678,7 @@
 
       ctx.fillStyle = '#cbd5e1';
       ctx.font = 'bold 16px Plus Jakarta Sans, sans-serif';
-      ctx.fillText(isRunning ? 'RUNNING' : 'CLICK START', 128, 72);
+      ctx.fillText(isRunning ? 'RUNNING' : 'TAP START', 128, 72);
 
       const handAngle = ((simMinutes % 60) / 60) * Math.PI * 2 - Math.PI / 2;
       ctx.strokeStyle = '#fb7185'; ctx.lineWidth = 5;
@@ -1772,20 +1700,18 @@
     watchTilt.add(watchFace);
 
     const watchHit = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.54, 0.54, 1.05, 16),
+      new THREE.CylinderGeometry(0.58, 0.58, 1.1, 16),
       new THREE.MeshBasicMaterial({ visible: false })
     );
     watchHit.position.set(0, 0.5, 0);
     watchHit.userData.kind = 'stopwatch';
     stopwatchGroup.add(watchHit);
 
-    const watchLabel = makeBillboardSprite('ಸ್ಟಾಪ್‌ವಾಚ್ • Stopwatch', 'ಪ್ರಾರಂಭಿಸಲು ಕ್ಲಿಕ್ ಮಾಡಿ', 'rgba(15,23,42,0.88)', '#fbbf24');
+    const watchLabel = makeBillboardSprite('ಸ್ಟಾಪ್‌ವಾಚ್ • Stopwatch', 'ಪ್ರಾರಂಭಿಸಲು ಟ್ಯಾಪ್ ಮಾಡಿ', 'rgba(15,23,42,0.88)', '#fbbf24');
     watchLabel.position.set(0, 0.14, 0.58);
     stopwatchGroup.add(watchLabel);
 
-    // =========================================================================
-    // 9. VAPOR PARTICLE SYSTEM (STEAM)
-    // =========================================================================
+    // Vapor Particle System
     const vaporTex = createVaporTexture();
     const vaporParticles = [];
     const vaporGroup = new THREE.Group();
@@ -1843,16 +1769,14 @@
       }
     }
 
-    // =========================================================================
-    // 10. SIMULATION STATE, DESKTOP & MOBILE MODE, HIDE TEXT & STEP CONTROLS
-    // =========================================================================
+    // Simulation State & Interaction Engine
     const simState = {
-      deviceMode: 'desktop', // 'desktop' | 'mobile'
+      deviceMode: isSmallScreen ? 'mobile' : 'desktop',
       textHidden: false,
       sunIntensity: 75,
       bowlWaterMl: 100.0,
       syringeMl: 0,
-      syringeZone: 'stand', // 'stand' | 'bowl' | 'container' | 'free'
+      syringeZone: 'stand',
       targetContainerId: null,
       injecting: false,
       running: false,
@@ -1864,7 +1788,6 @@
     const pointer = new THREE.Vector2();
     const dragPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
     const dragIntersect = new THREE.Vector3();
-
     let activeDrag = null;
 
     let bannerOverrideTimer = null;
@@ -1872,6 +1795,8 @@
       clearTimeout(bannerOverrideTimer);
       document.getElementById('step-text-kn').textContent = knMsg;
       document.getElementById('step-text-en').textContent = enMsg;
+      document.getElementById('mobile-step-kn').textContent = knMsg;
+      document.getElementById('mobile-step-en').textContent = enMsg;
       if (badgeText) document.getElementById('step-badge').textContent = badgeText;
       if (duration > 0) {
         bannerOverrideTimer = setTimeout(() => updateDashboardUI(), duration);
@@ -2061,20 +1986,18 @@
       const hitObj = hits[0].object;
       const isTouchOrMobile = simState.deviceMode === 'mobile' || e.pointerType === 'touch';
 
-      // 1) Clicked 3D Stopwatch
       if (hitObj.userData.kind === 'stopwatch') {
         handleStopwatchClick();
         return;
       }
 
       if (simState.running) {
-        setTopStatus('ಪ್ರಯೋಗ ನಡೆಯುತ್ತಿದೆ! • Time-lapse is running.', 'Wait for completion or click Stopwatch to pause.', null, 2000);
+        setTopStatus('ಪ್ರಯೋಗ ನಡೆಯುತ್ತಿದೆ! • Time-lapse is running.', 'Wait for completion or tap Stopwatch to pause.', null, 2000);
         return;
       }
 
       const allPlaced = Object.values(containers).every(c => c.placed);
 
-      // 2) Clicked Water Bowl
       if (hitObj.userData.kind === 'water_bowl') {
         if (!allPlaced) {
           setTopStatus('ಮೊದಲು 3 ಪಾತ್ರೆಗಳನ್ನು ಮೇಜಿನ ಮೇಲೆ ಇರಿಸಿ!', 'Place Bottle, Cup, and Plate on the table first (Step 1).', null, 2400);
@@ -2088,13 +2011,11 @@
         return;
       }
 
-      // 3) Clicked Syringe Plunger
       if (hitObj.userData.kind === 'syringe_plunger') {
         if (!allPlaced) {
           setTopStatus('ಮೊದಲು 3 ಪಾತ್ರೆಗಳನ್ನು ಮೇಜಿನ ಮೇಲೆ ಇರಿಸಿ!', 'Place all 3 containers on the table first!', null, 2400);
           return;
         }
-        // In Mobile Mode, tapping plunger in bowl/stand immediately draws 20 ml!
         if (isTouchOrMobile && simState.syringeMl < 19.9) {
           quickFillSyringeFromBowl();
           return;
@@ -2127,13 +2048,11 @@
         return;
       }
 
-      // 4) Clicked Syringe Barrel
       if (hitObj.userData.kind === 'syringe_barrel') {
         if (!allPlaced) {
           setTopStatus('ಮೊದಲು 3 ಪಾತ್ರೆಗಳನ್ನು ಮೇಜಿನ ಮೇಲೆ ಇರಿಸಿ!', 'Place all 3 containers on the table first!', null, 2400);
           return;
         }
-        // In Mobile Mode, tapping syringe barrel draws 20 ml from bowl automatically!
         if (isTouchOrMobile && simState.syringeMl < 19.9) {
           quickFillSyringeFromBowl();
           return;
@@ -2158,24 +2077,20 @@
         return;
       }
 
-      // 5) Clicked Container (Bottle, Cup, Plate)
       if (hitObj.userData.dragTarget) {
         const cGroup = hitObj.userData.dragTarget;
         const c = containers[cGroup.userData.containerId];
 
-        // Mobile Mode: One-tap places unplaced container onto its pad!
         if (!c.placed && isTouchOrMobile) {
           placeContainerOnSlot(c);
           return;
         }
 
-        // If placed & unfilled, and syringe has water -> pour!
         if (c.placed && c.waterMl < 19.9) {
           if (simState.syringeMl > 0.5) {
             animateInjectIntoContainer(c);
             return;
           } else if (isTouchOrMobile && allPlaced) {
-            // In Mobile Mode, if user taps an empty container directly, auto-draw 20ml & pour!
             quickFillSyringeFromBowl();
             setTimeout(() => animateInjectIntoContainer(c), 180);
             return;
@@ -2421,9 +2336,7 @@
       updateDashboardUI();
     }
 
-    // =========================================================================
-    // 10B. HIDE ALL TEXT, PREVIOUS / NEXT / BACK CONTROLS & DESKTOP/MOBILE MODE
-    // =========================================================================
+    // Hide All Text, Previous / Next / Back & Desktop / Mobile Switch
     function setAllTextHidden(hidden) {
       simState.textHidden = hidden;
       document.body.classList.toggle('hide-all-text', hidden);
@@ -2431,7 +2344,7 @@
 
       document.getElementById('toggle-text-en').textContent = hidden ? '👁️ Show Text' : '👁️ Hide Text';
       document.getElementById('toggle-text-kn').textContent = hidden ? 'ಪಠ್ಯ ತೋರಿಸಿ' : 'ಪಠ್ಯ ಮರೆಮಾಡಿ';
-      handleResize();
+      requestAnimationFrame(() => handleResize());
       updateDashboardUI();
     }
 
@@ -2452,11 +2365,11 @@
         controls.target.copy(DEFAULT_CAM_TARGET);
       }
       controls.update();
-      handleResize();
+      requestAnimationFrame(() => handleResize());
+      setTimeout(() => handleResize(), 120);
       updateDashboardUI();
     }
 
-    // Step-by-step Next & Previous actions (for clean control bar when text is hidden)
     function goNextStep() {
       if (simState.completed) {
         resetExperiment();
@@ -2483,7 +2396,6 @@
 
     function goPreviousStep() {
       if (simState.running || simState.completed || simState.simMinutes > 0) {
-        // Revert back to filled containers before stopwatch started
         simState.running = false;
         simState.completed = false;
         simState.simMinutes = 0;
@@ -2496,13 +2408,12 @@
           c.label.userData.updateLabel(baseTitle, '20.0 ml', '#34d399');
         });
         drawStopwatchFace(0, false);
-        watchLabel.userData.updateLabel('ಸ್ಟಾಪ್‌ವಾಚ್ • Stopwatch', 'ಪ್ರಾರಂಭಿಸಲು ಕ್ಲಿಕ್ ಮಾಡಿ', '#fbbf24');
+        watchLabel.userData.updateLabel('ಸ್ಟಾಪ್‌ವಾಚ್ • Stopwatch', 'ಪ್ರಾರಂಭಿಸಲು ಟ್ಯಾಪ್ ಮಾಡಿ', '#fbbf24');
         document.getElementById('result-overlay').classList.remove('open');
         updateDashboardUI();
         return;
       }
 
-      // If syringe has water drawn, empty syringe back to bowl
       if (simState.syringeMl > 0) {
         simState.bowlWaterMl = Math.min(100, simState.bowlWaterMl + simState.syringeMl);
         simState.syringeMl = 0;
@@ -2512,7 +2423,6 @@
         return;
       }
 
-      // Empty the last filled container
       const filledList = Object.values(containers).filter(c => c.waterMl > 0.1);
       if (filledList.length > 0) {
         const lastFilled = filledList[filledList.length - 1];
@@ -2527,7 +2437,6 @@
         return;
       }
 
-      // Return the last placed container back to the Toolbox
       const placedList = Object.values(containers).filter(c => c.placed);
       if (placedList.length > 0) {
         const lastPlaced = placedList[placedList.length - 1];
@@ -2547,14 +2456,11 @@
     document.getElementById('btn-mode-desktop').addEventListener('click', () => setDeviceMode('desktop'));
     document.getElementById('btn-mode-mobile').addEventListener('click', () => setDeviceMode('mobile'));
 
-    // Auto-select Mobile Mode if opened on a narrow touch screen
-    if (window.innerWidth <= 768) {
+    if (isSmallScreen) {
       setDeviceMode('mobile');
     }
 
-    // =========================================================================
-    // 11. SUN INTENSITY SLIDER & ATMOSPHERE UPDATE
-    // =========================================================================
+    // Sun Intensity Slider
     const sunSlider = document.getElementById('sun-slider');
     const sunValueBadge = document.getElementById('sun-value-badge');
 
@@ -2579,16 +2485,14 @@
     sunSlider.addEventListener('input', (e) => applySunIntensity(e.target.value));
     applySunIntensity(75);
 
-    // =========================================================================
-    // 12. HUD DASHBOARD & LIVE CANVAS BAR GRAPH
-    // =========================================================================
+    // HUD Dashboard & Live Bar Graph
     const chartCanvas = document.getElementById('evap-chart');
     const chartCtx = chartCanvas.getContext('2d');
 
     function drawBarGraph() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const w = chartCanvas.clientWidth || 270;
-      const h = chartCanvas.clientHeight || 148;
+      const h = chartCanvas.clientHeight || 140;
       if (chartCanvas.width !== w * dpr || chartCanvas.height !== h * dpr) {
         chartCanvas.width = w * dpr;
         chartCanvas.height = h * dpr;
@@ -2630,14 +2534,16 @@
         const y = padT + plotH - barH;
 
         ctx.fillStyle = 'rgba(255,255,255,0.06)';
-        ctx.beginPath(); ctx.roundRect(x, padT, barW, plotH, 5); ctx.fill();
+        drawRoundedBox(ctx, x, padT, barW, plotH, 5);
+        ctx.fill();
 
         if (barH > 1) {
           const grad = ctx.createLinearGradient(x, y, x, padT + plotH);
           grad.addColorStop(0, item.color2);
           grad.addColorStop(1, item.color1);
           ctx.fillStyle = grad;
-          ctx.beginPath(); ctx.roundRect(x, y, barW, barH, 5); ctx.fill();
+          drawRoundedBox(ctx, x, y, barW, barH, 5);
+          ctx.fill();
         }
 
         ctx.fillStyle = '#f8fafc';
@@ -2677,6 +2583,8 @@
       const stepBadge = document.getElementById('step-badge');
       const stepKn = document.getElementById('step-text-kn');
       const stepEn = document.getElementById('step-text-en');
+      const mobKn = document.getElementById('mobile-step-kn');
+      const mobEn = document.getElementById('mobile-step-en');
       const statusTag = document.getElementById('sim-status-tag');
       const hiddenStepLabel = document.getElementById('hidden-step-label');
 
@@ -2689,61 +2597,66 @@
       pillWatch.className = 'status-pill ' + (simState.completed ? 'done' : (simState.running || readyCount === 3 ? 'active' : ''));
 
       const isMobile = simState.deviceMode === 'mobile';
+      let knMsg = '';
+      let enMsg = '';
 
       if (simState.completed) {
         stepBadge.textContent = 'ಪೂರ್ಣ • Done';
         hiddenStepLabel.textContent = '3 / 3 ✓';
-        stepKn.textContent = 'ಪ್ರಯೋಗ ಪೂರ್ಣಗೊಂಡಿದೆ! ಹೆಚ್ಚು ಮೇಲ್ಮೈ ವಿಸ್ತೀರ್ಣ = ವೇಗವಾದ ಆವಿಯಾಗುವಿಕೆ.';
-        stepEn.textContent = 'Experiment complete! Wide Plate evaporated fastest due to larger surface area.';
+        knMsg = 'ಪ್ರಯೋಗ ಪೂರ್ಣಗೊಂಡಿದೆ! ಹೆಚ್ಚು ಮೇಲ್ಮೈ ವಿಸ್ತೀರ್ಣ = ವೇಗವಾದ ಆವಿಯಾಗುವಿಕೆ.';
+        enMsg = 'Experiment complete! Wide Plate evaporated fastest due to larger surface area.';
         statusTag.textContent = 'ಪೂರ್ಣ • Complete';
         statusTag.style.color = '#34d399';
       } else if (simState.running) {
         stepBadge.textContent = 'ಚಾಲನೆಯಲ್ಲಿ • Live';
         hiddenStepLabel.textContent = `${hrs}h ${String(mins).padStart(2, '0')}m`;
-        stepKn.textContent = 'ಸಮಯ-ವೇಗ ಚಾಲನೆಯಲ್ಲಿದೆ! ಸೂರ್ಯನ ತೀವ್ರತೆ ಬದಲಾಯಿಸಿ ಆವಿಯಾಗುವಿಕೆಯನ್ನು ನೋಡಿ.';
-        stepEn.textContent = 'Time-lapse running! Adjust Sun Intensity slider and watch vapor rise from the Plate.';
+        knMsg = 'ಸಮಯ-ವೇಗ ಚಾಲನೆಯಲ್ಲಿದೆ! ಸೂರ್ಯನ ತೀವ್ರತೆ ಬದಲಾಯಿಸಿ ಆವಿಯಾಗುವಿಕೆಯನ್ನು ನೋಡಿ.';
+        enMsg = 'Time-lapse running! Adjust Sun Intensity slider and watch vapor rise from the Plate.';
         statusTag.textContent = 'ನಡೆಯುತ್ತಿದೆ • Running';
         statusTag.style.color = '#38bdf8';
       } else if (placedCount < 3) {
         stepBadge.textContent = 'ಹಂತ 1 / Step 1';
         hiddenStepLabel.textContent = `1 / 3 (${placedCount}/3)`;
-        stepKn.textContent = isMobile
-          ? 'ಟೂಲ್‌ಬಾಕ್ಸ್‌ನಲ್ಲಿರುವ ಬಾಟಲಿ, ಲೋಟ ಮತ್ತು ತಟ್ಟೆಯನ್ನು ಟ್ಯಾಪ್ (Tap) ಮಾಡಿ ಮೇಜಿನ ಮೇಲೆ ಇರಿಸಿ.'
+        knMsg = isMobile
+          ? '1️⃣ ಟೂಲ್‌ಬಾಕ್ಸ್‌ನಲ್ಲಿರುವ ಬಾಟಲಿ, ಲೋಟ ಮತ್ತು ತಟ್ಟೆಯನ್ನು ಟ್ಯಾಪ್ (Tap) ಮಾಡಿ ಮೇಜಿನ ಮೇಲೆ ಇರಿಸಿ.'
           : 'ಟೂಲ್‌ಬಾಕ್ಸ್‌ನಿಂದ ಬಾಟಲಿ, ಲೋಟ ಮತ್ತು ತಟ್ಟೆಯನ್ನು ಮೇಜಿನ ಮೇಲೆ ಎಳೆದು ಇರಿಸಿ.';
-        stepEn.textContent = isMobile
+        enMsg = isMobile
           ? 'Tap Bottle, Cup, and Plate in the Toolbox to place them on the table.'
           : 'Drag Bottle, Cup, and Plate from the Toolbox onto the 3 pads on the table.';
       } else if (readyCount < 3) {
         stepBadge.textContent = 'ಹಂತ 2 / Step 2';
         hiddenStepLabel.textContent = `2 / 3 (${readyCount}/3)`;
         if (simState.syringeMl >= 19.95) {
-          stepKn.textContent = isMobile
-            ? '20 ml ಸಿದ್ಧ! ಬಾಟಲಿ, ಲೋಟ ಅಥವಾ ತಟ್ಟೆಯನ್ನು ಟ್ಯಾಪ್ ಮಾಡಿ ನೀರು ಹಾಕಿ.'
+          knMsg = isMobile
+            ? '2️⃣ 20 ml ಸಿದ್ಧ! ಬಾಟಲಿ, ಲೋಟ ಅಥವಾ ತಟ್ಟೆಯನ್ನು ಟ್ಯಾಪ್ ಮಾಡಿ ನೀರು ಹಾಕಿ.'
             : '20 ml ಸಿದ್ಧ! ಸಿರಿಂಜ್ ಅನ್ನು ಪಾತ್ರೆಯ ಮೇಲೆ ಎಳೆದು ಪ್ಲಂಜರ್ ಕೆಳಕ್ಕೆ ಒತ್ತಿ (ಅಥವಾ ಕ್ಲಿಕ್ ಮಾಡಿ).';
-          stepEn.textContent = isMobile
+          enMsg = isMobile
             ? '20 ml ready! Tap Bottle, Cup, or Plate to pour water in.'
             : '20 ml ready! Drag Syringe over Bottle/Cup/Plate & push plunger down (or click).';
         } else {
-          stepKn.textContent = isMobile
-            ? 'ನೀರಿನ ಬಟ್ಟಲು ಅಥವಾ ಸಿರಿಂಜ್ ಟ್ಯಾಪ್ ಮಾಡಿ 20 ml ನೀರು ತೆಗೆಯಿರಿ.'
+          knMsg = isMobile
+            ? '2️⃣ ನೀರಿನ ಬಟ್ಟಲು ಅಥವಾ ಸಿರಿಂಜ್ ಟ್ಯಾಪ್ ಮಾಡಿ 20 ml ನೀರು ತೆಗೆಯಿರಿ.'
             : 'ನೀರಿನ ಬಟ್ಟಲಿನಲ್ಲಿ ಸಿರಿಂಜ್ ಪ್ಲಂಜರ್ ಅನ್ನು ಮೇಲಕ್ಕೆ ಎಳೆದು 20 ml ನೀರು ತೆಗೆಯಿರಿ.';
-          stepEn.textContent = isMobile
+          enMsg = isMobile
             ? 'Tap the Water Bowl or Syringe to draw 20 ml of blue water.'
             : 'Pull the Syringe plunger UP in the Water Bowl to draw 20 ml of blue water.';
         }
       } else {
         stepBadge.textContent = 'ಹಂತ 3 / Step 3';
         hiddenStepLabel.textContent = '3 / 3';
-        stepKn.textContent = 'ಸಮಯ-ವೇಗ ಪ್ರಾರಂಭಿಸಲು ಮೇಜಿನ ಮೇಲಿರುವ 3D ಸ್ಟಾಪ್‌ವಾಚ್ ಅನ್ನು ಕ್ಲಿಕ್ / ಟ್ಯಾಪ್ ಮಾಡಿ!';
-        stepEn.textContent = 'Click or tap the 3D Stopwatch on the table to start the evaporation time-lapse!';
+        knMsg = '3️⃣ ಸಮಯ-ವೇಗ ಪ್ರಾರಂಭಿಸಲು ಮೇಜಿನ ಮೇಲಿರುವ 3D ಸ್ಟಾಪ್‌ವಾಚ್ ಅನ್ನು ಟ್ಯಾಪ್ / ಕ್ಲಿಕ್ ಮಾಡಿ!';
+        enMsg = 'Tap or click the 3D Stopwatch on the table to start the evaporation time-lapse!';
       }
+
+      stepKn.textContent = knMsg;
+      stepEn.textContent = enMsg;
+      mobKn.textContent = knMsg;
+      mobEn.textContent = enMsg;
 
       drawBarGraph();
     }
 
-    // =========================================================================
-    // 13. CONFETTI & RESULT MODAL
-    // =========================================================================
+    // Confetti & Result Modal
     const confettiCanvas = document.getElementById('confetti-canvas');
     const confettiCtx = confettiCanvas.getContext('2d');
     let confettiPieces = [];
@@ -2811,9 +2724,7 @@
       updateDashboardUI();
     }
 
-    // =========================================================================
-    // 14. RESET HANDLERS
-    // =========================================================================
+    // Reset Handlers
     function resetExperiment() {
       simState.running = false;
       simState.completed = false;
@@ -2845,7 +2756,7 @@
       syringeGroup.position.copy(SYRINGE_HOME_POS);
       syncSyringeVisuals();
       drawStopwatchFace(0, false);
-      watchLabel.userData.updateLabel('ಸ್ಟಾಪ್‌ವಾಚ್ • Stopwatch', 'ಪ್ರಾರಂಭಿಸಲು ಕ್ಲಿಕ್ ಮಾಡಿ', '#fbbf24');
+      watchLabel.userData.updateLabel('ಸ್ಟಾಪ್‌ವಾಚ್ • Stopwatch', 'ಪ್ರಾರಂಭಿಸಲು ಟ್ಯಾಪ್ ಮಾಡಿ', '#fbbf24');
 
       document.getElementById('result-overlay').classList.remove('open');
       cancelAnimationFrame(confettiAnimId);
@@ -2867,9 +2778,7 @@
       controls.update();
     });
 
-    // =========================================================================
-    // 15. MAIN ANIMATION & EVAPORATION PHYSICS LOOP
-    // =========================================================================
+    // Main Animation & Evaporation Physics Loop
     let lastTime = performance.now();
     let vaporAccumulator = { bottle: 0, cup: 0, plate: 0 };
     let uiSyncTimer = 0;
@@ -2945,10 +2854,12 @@
       drawBarGraph();
     }
     window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', () => setTimeout(handleResize, 150));
 
     syncBowlVisuals();
     syncSyringeVisuals();
     updateDashboardUI();
+    handleResize();
     requestAnimationFrame(animate);
   </script>
 </body>
